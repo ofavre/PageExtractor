@@ -219,17 +219,8 @@ function clearResults() {
     results = [];
     highlights = [];
 }
-/*function info(collection) {
-    var parts = [];
-    for (var i = 0 ; i < collection.length ; i++) {
-        //parts.push(' - '+makeXPath(collection[i].element));
-        parts.push(' - '+JSON.stringify(collection[i].data));
-    }
-    return parts.join('\n');
-}*/
 function learn() {
     clearResults();
-    //alert("positives:\n"+info(positives)+"\n\nnegatives:\n"+info(negatives));
     //var tmprslt = testRule('/html/body//'+positives[0].data[positives[0].data.length-1].tag+'[contains(concat(" ",@class," "),"'+positives[0].data[positives[0].data.length-1].classes[0]+'")]');
     var tmprslt = testRule('/html/body//'+positives[0].data[positives[0].data.length-1].tag);
     console.log(tmprslt);
@@ -400,6 +391,8 @@ function learn() {
     // TODO: Create a criteria class, that generates XPath queries
 
     /*
+     * ARFF export of all elements returned by XPath
+     *
     var arff = "@relation PageExtractor\n\n"+
         "@attribute tag string\n"+
         "@attribute position real\n"+
