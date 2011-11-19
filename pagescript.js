@@ -370,19 +370,27 @@ function learn() {
         "@attribute classes string\n"+
         "\n@data\n";
     var instances = [];
+    var best;
     for (var i = 0 ; i < data_sortedIdx.length ; i++) {
         var d = data[data_sortedIdx[i]];
-        instances.push([
-            d.depth,
-            d.depth_is_reversed ? '1' : '0',
-            d.element_indexes.length,
-            d.mean_max_similarity_with_positives,
-            d.mean_max_similarity_with_negatives,
-            d.classes.join(' & ')
-        ].join(','));
+        if (d.mean_max_similarity_with_positives > d.mean_max_similarity_with_negatives) {
+            if (best == undefined) best = i;
+            instances.push([
+                d.depth,
+                d.depth_is_reversed ? '1' : '0',
+                d.element_indexes.length,
+                d.mean_max_similarity_with_positives,
+                d.mean_max_similarity_with_negatives,
+                d.classes.join(' & ')
+            ].join(','));
+        }
     }
     arff += instances.join('\n');
     setDataExport(arff);
+
+    best = data[data_sortedIdx[best]];
+    // TODO: Use the rule, check validity, recurse
+    // TODO: Create a criteria class, that generates XPath queries
 
     /*
     var arff = "@relation PageExtractor\n\n"+
