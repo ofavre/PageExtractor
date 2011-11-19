@@ -1,3 +1,10 @@
+/*
+ * PageExtractor - An interactive page splitter
+ *
+ * Copyright(c) 2011 Olivier Favre <of.olivier.favre@gmail.com>
+ * See LICENSE file.
+ */
+
 // Inspired by jQuery.data()
 var dataCache = {};
 var next_uuid = 0;

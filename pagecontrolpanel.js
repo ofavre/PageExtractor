@@ -1,3 +1,10 @@
+/*
+ * PageExtractor - An interactive page splitter
+ *
+ * Copyright(c) 2011 Olivier Favre <of.olivier.favre@gmail.com>
+ * See LICENSE file.
+ */
+
 function Draggable(element) {
     var that = this;
     this.element = element;
