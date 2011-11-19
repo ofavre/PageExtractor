@@ -6,8 +6,8 @@
  */
 
 function cutSetup(info, tab) {
-    chrome.tabs.executeScript(tab.id, {file:"pagecontrolpanel.js"});
-    chrome.tabs.executeScript(tab.id, {file:"pagescript.js"});
+    chrome.tabs.executeScript(tab.id, {file:"src/controlpanel/pagecontrolpanel.js"});
+    chrome.tabs.executeScript(tab.id, {file:"src/pagescript.js"});
 }
 
 var parent = chrome.contextMenus.create({

@@ -25,7 +25,7 @@
     font-family: 'PT Sans Caption';
     font-style: normal;
     font-weight: normal;
-    src: local('PT Sans Caption'), local('PTSans-Caption'), url('chrome://EXTENSIONURL/PTSansCaption.woff') format('woff');
+    src: local('PT Sans Caption'), local('PTSans-Caption'), url('chrome://EXTENSIONURL/assets/fonts/PTSansCaption.woff') format('woff');
 }
 
 .PageExtractorExampleHighlight {
@@ -37,7 +37,7 @@
 }
 .PageExtractorExampleHighlight.PageExtractorType-positive {
     /* Overlappable dashes 3px wide, 3px gap */
-    background-image: url('chrome://EXTENSIONURL/highlight-positive-3.png');
+    background-image: url('chrome://EXTENSIONURL/assets/images/highlight-positive-3.png');
     background-position: top left;
     background-attachment: fixed;
     background-repeat: repeat;
@@ -47,7 +47,7 @@
 }
 .PageExtractorExampleHighlight.PageExtractorType-negative {
     /* Overlappable dashes 3px wide, 3px gap */
-    background-image: url('chrome://EXTENSIONURL/highlight-negative-3.png');
+    background-image: url('chrome://EXTENSIONURL/assets/images/highlight-negative-3.png');
     background-position: top left;
     background-attachment: fixed;
     background-repeat: repeat;
@@ -57,7 +57,7 @@
 }
 .PageExtractorExampleHighlight.PageExtractorType-result {
     /* Overlappable dashes 3px wide, 3px gap */
-    background-image: url('chrome://EXTENSIONURL/highlight-result-3.png');
+    background-image: url('chrome://EXTENSIONURL/assets/images/highlight-result-3.png');
     background-position: top left;
     background-attachment: fixed;
     background-repeat: repeat;

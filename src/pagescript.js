@@ -764,7 +764,7 @@ function hideDataExport() {
 function installCss() {
     if (!document.getElementById("PageExtractorCss")) {
         // The following call leverages a regex for chrome.extension.getURL() incrustation
-        chrome.extension.sendRequest({action: "fetchExtensionFile", file: "pagecss.css"}, function(response) {
+        chrome.extension.sendRequest({action: "fetchExtensionFile", file: "src/css/pagecss.css"}, function(response) {
             var css = document.createElement("style");
             css.id = "PageExtractorCss";
             css.type = "text/css";
@@ -780,7 +780,7 @@ function removeCss() {
     ctrl.parentNode.removeChild(ctrl);
 }
 function installControlPanel() {
-    chrome.extension.sendRequest({action: "fetchExtensionFile", file: "pagecontrolpanel.html"}, function(response) {
+    chrome.extension.sendRequest({action: "fetchExtensionFile", file: "src/controlpanel/pagecontrolpanel.html"}, function(response) {
         var d = document.createElement('div');
         d.id = "PageExtractorControlPanel";
         d.className = "PageExtractorControlPanel";

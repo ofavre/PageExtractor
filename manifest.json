@@ -3,17 +3,17 @@
   "version": "0.1",
   "description": "Splits it a page for elements you've selected by clicking on it.",
   "icons": {
-    "16": "icon_16.png",
-    "32": "icon_32.png",
-    "48": "icon_48.png",
-    "64": "icon_64.png",
-    "128": "icon_128.png",
-    "256": "icon_256.png"
+    "16": "assets/images/icon_16.png",
+    "32": "assets/images/icon_32.png",
+    "48": "assets/images/icon_48.png",
+    "64": "assets/images/icon_64.png",
+    "128": "assets/images/icon_128.png",
+    "256": "assets/images/icon_256.png"
   },
   "permissions": [
     "contextMenus",
     "tabs",
     "<all_urls>"
   ],
-  "background_page": "background.html"
+  "background_page": "src/extension/background.html"
 }

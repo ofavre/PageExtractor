@@ -49,7 +49,6 @@ function initControlPanel(controlPanel) {
     new Draggable(controlPanel);
     document.getElementById("PageExtractorLaunchLearning").addEventListener("click", learn, false);
     document.getElementById("PageExtractorClearResults").addEventListener("click", clearResults, false);
-    //document.getElementById("PageExtractorClose").src = chrome.extension.getURL("icon_16.png");
     document.getElementById("PageExtractorClose").addEventListener("click", PageExtractorTearDown, false);
     document.getElementById("PageExtractorDataExportHide").addEventListener("click", hideDataExport, false);
 }
