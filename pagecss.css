@@ -1,0 +1,154 @@
+/*
+ * http://www.google.com/webfonts#ReviewPlace:refine/Collection:Droid+Sans|Lato|Cabin|Andika|Istok+Web|Cantarell|Chivo|Open+Sans|Varela|PT+Sans+Caption|Nobile|Numans
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans);
+@import url(http://fonts.googleapis.com/css?family=Lato);
+@import url(http://fonts.googleapis.com/css?family=Cabin);
+@import url(http://fonts.googleapis.com/css?family=Andika);
+@import url(http://fonts.googleapis.com/css?family=Istok+Web);
+@import url(http://fonts.googleapis.com/css?family=Cantarell);
+@import url(http://fonts.googleapis.com/css?family=Chivo);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+@import url(http://fonts.googleapis.com/css?family=Varela);
+@import url(http://fonts.googleapis.com/css?family=PT+Sans+Caption);
+@import url(http://fonts.googleapis.com/css?family=Nobile);
+@import url(http://fonts.googleapis.com/css?family=Numans);
+*/
+/*@import url(https://fonts.googleapis.com/css?family=PT+Sans+Caption);*/
+@font-face {
+    font-family: 'PT Sans Caption';
+    font-style: normal;
+    font-weight: normal;
+    src: local('PT Sans Caption'), local('PTSans-Caption'), url('chrome://EXTENSIONURL/PTSansCaption.woff') format('woff');
+}
+
+.PageExtractorExampleHighlight {
+    position: absolute;
+    border-width: 2px;
+    padding: 4px 4px 4px 4px;
+    opacity: 0.5;
+    z-index: 1000000000;
+}
+.PageExtractorExampleHighlight.PageExtractorType-positive {
+    /* Overlappable dashes 3px wide, 3px gap */
+    background-image: url('chrome://EXTENSIONURL/highlight-positive-3.png');
+    background-position: top left;
+    background-attachment: fixed;
+    background-repeat: repeat;
+    /* Solid color, don't overlap well... */
+    /*background-color: #00FF00;
+    border-color: #FF00FF;*/
+}
+.PageExtractorExampleHighlight.PageExtractorType-negative {
+    /* Overlappable dashes 3px wide, 3px gap */
+    background-image: url('chrome://EXTENSIONURL/highlight-negative-3.png');
+    background-position: top left;
+    background-attachment: fixed;
+    background-repeat: repeat;
+    /* Solid color, don't overlap well... */
+    /*background-color: #FF0000;
+    border-color: #00FFFF;*/
+}
+.PageExtractorExampleHighlight.PageExtractorType-result {
+    /* Overlappable dashes 3px wide, 3px gap */
+    background-image: url('chrome://EXTENSIONURL/highlight-result-3.png');
+    background-position: top left;
+    background-attachment: fixed;
+    background-repeat: repeat;
+    /* Solid color, don't overlap well... */
+    /*background-color: #0000FF;
+    border-color: #FFFF00;*/
+}
+
+.PageExtractorControlPanel, .PageExtractorControlPanel div, .PageExtractorControlPanel span, .PageExtractorControlPanel ol, .PageExtractorControlPanel li, .PageExtractorControlPanel button {
+    /* Reset */
+    font-family: 'PT Sans Caption', 'Lucida sans', Arial, sans-serif;
+    font-size: medium !important;
+    font-variant: normal;
+    /* !Reset */
+}
+.PageExtractorControlPanel {
+    z-index: 1000000001;
+    background-image: -webkit-linear-gradient(top, rgba(208,0,255,0.9) 1em, rgba(192,0,192,0.9) 4em, rgba(128,0,128,0.9) 100%);
+    /*background-color: #C000C0;
+    background-color: rgba(192,0,192,0.9);
+    /*opacity: 0.9;*/
+    border: 3px solid #800080;
+    border-radius: 15px;
+    padding: 5px;
+    position: fixed;
+    left: 30px;
+    top: 30px;
+    color: #FFFFFF;
+    -webkit-box-shadow: #400040 8px 8px 10px;
+}
+.PageExtractorControlPanel img, .PageExtractorControlPanel span {
+    border: 0;
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+}
+.PageExtractorControlPanel .close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+.PageExtractorControlPanel .steps {
+    font-variant: italic;
+}
+.PageExtractorControlPanel .steps ol {
+    padding: 0 0 0 0;
+    padding-left: 3ex;
+    margin: 0 0 0 0;
+    margin-top: 0.5em;
+    margin-bottom: 0em;
+}
+.PageExtractorControlPanel .steps li {
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+}
+.PageExtractorControlPanel .steps .title {
+    font-weight: bold;
+}
+.PageExtractorControlPanel .steps .optional {
+    font-size: 80% !important;
+    font-style: italic;
+    color: lightgrey;
+}
+.PageExtractorControlPanel .steps .tip {
+    font-size: 80% !important;
+    display: block;
+    color: lightgrey;
+}
+.PageExtractorControlPanel .learn {
+    border-width: 2px;
+    border-color: #800080;
+    background-image: -webkit-linear-gradient(top, rgba(255,0,255,0.9) 10%, rgba(208,0,208,0.9) 50%, rgba(144,0,144,0.9) 90%);
+    /*background-color: #A020FF;*/
+    -webkit-border-radius: 1em;
+    color: white;
+    font-weight: bold;
+    margin-left: 0px;
+    margin-bottom: 0px;
+}
+.PageExtractorControlPanel .clearResults {
+    border-width: 1px;
+    border-color: #800080;
+    background-image: -webkit-linear-gradient(top, rgba(208,0,255,0.9) 10%, rgba(192,0,192,0.9) 50%, rgba(128,0,128,0.9) 90%);
+    /*background-color: #A020FF;*/
+    -webkit-border-radius: 1em;
+    color: white;
+    margin-left: 0px;
+    margin-bottom: 0px;
+}
+.PageExtractorControlPanel .data-export-div {
+    display: none;
+    text-align: right;
+}
+.PageExtractorControlPanel .data-export {
+    width: 100%;
+    height: 5em;
+    display: run-in; /* for clear:both to work if the textarea gets redimensioned */
+    clear: both;
+}
+.PageExtractorControlPanel .data-export-hide {
+    color: lightblue;
+}

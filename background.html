@@ -1,0 +1,20 @@
+<script src="contextmenu.js"></script>
+<script>
+    function fetchExtensionFile(file, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(data) {
+            if (xhr.readyState == 4) {
+                // Replace chrome://EXTENSIONURL/ in loaded files to match the extension actual URL
+                callback(xhr.responseText.replace(/chrome:\/\/EXTENSIONURL\//g, chrome.extension.getURL("")));
+            }
+        }
+        xhr.open("GET", chrome.extension.getURL(file), true);
+        xhr.send();
+    }
+    function onRequest(request, sender, callback) {
+        if (request.action == 'fetchExtensionFile') {
+            fetchExtensionFile(request.file, callback);
+        }
+    };
+    chrome.extension.onRequest.addListener(onRequest);
+</script>
