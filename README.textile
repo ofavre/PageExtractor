@@ -4,21 +4,14 @@ A chrome extension for webpage dissection.
 
 h2. Purpose
 
-Well, you should know there is no warranty of any kind, not even of
-usefulness. But no warranty does not mean there is none.
-Of course I'm publishing this extension in the _hope_ that you will
-find it (very?) useful!
+Well, you should know there is no warranty of any kind, not even of usefulness. But no warranty does not mean there is none.
+Of course I'm publishing this extension in the _hope_ that you will find it (very?) useful!
 
-When searching for a product, the websites are tipically very structured,
-each element is very similar to each other. Such content is easy to
-extract.
+When searching for a product, the websites are tipically very structured, each element is very similar to each other. Such content is easy to extract.
 
-From extracted content, you can take actions such as following a link
-like the detailed product page or the next result page, or if on the
-desired content, you can copy the information into a report.
+From extracted content, you can take actions such as following a link like the detailed product page or the next result page, or if on the desired content, you can copy the information into a report.
 
-The extension is interactive. That means that you it will require some
-input from you to guide the extraction and to know what actions to take.
+The extension is interactive. That means that you it will require some input from you to guide the extraction and to know what actions to take.
 However this is often the pledge of flexibility.
 
 h2. License
@@ -38,8 +31,5 @@ h2. Installation
 
 h2. Hacking
 
-When modifying the extension, don't forget to click "Refresh" under the
-extension in the list.
-Check the background page (Inspect active vues), if you see any errors
-in the Console tab, try again by refreshing the extension once more.
-I takes upto 6 clicks sometimes...
+When modifying the extension, don't forget to click "Refresh" under the extension in the list.
+Check the background page (Inspect active vues), if you see any errors in the Console tab, try again by refreshing the extension once more. I takes upto 6 clicks sometimes...
