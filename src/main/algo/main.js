@@ -5,10 +5,13 @@
  * See LICENSE file.
  */
 
-var positives = [];
-var negatives = [];
+if (!PageExtractor) PageExtractor = {};
+if (!PageExtractor.Algo) PageExtractor.Algo = {};
 
-function learn() {
+PageExtractor.Algo.positives = [];
+PageExtractor.Algo.negatives = [];
+
+PageExtractor.Algo.learn = function () {
     clearResults();
     //var tmprslt = testRule('/html/body//'+positives[0].data[positives[0].data.length-1].tag+'[contains(concat(" ",@class," "),"'+positives[0].data[positives[0].data.length-1].classes[0]+'")]');
     var tmprslt = testRule('/html/body//'+positives[0].data[positives[0].data.length-1].tag);

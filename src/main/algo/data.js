@@ -5,7 +5,11 @@
  * See LICENSE file.
  */
 
-function makeExample(target, isPositive) {
+if (!PageExtractor) PageExtractor = {};
+if (!PageExtractor.Algo) PageExtractor.Algo = {};
+if (!PageExtractor.Algo.Data) PageExtractor.Algo.Data = {};
+
+PageExtractor.Algo.Data.makeExample = function (target, isPositive) {
     var rtn = {
         element: target,
         positive: isPositive,
@@ -38,4 +42,4 @@ function makeExample(target, isPositive) {
         rtn.data[d].depth_reversed = d - (rtn.data.length-1);
     }
     return rtn;
-}
+};

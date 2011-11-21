@@ -5,10 +5,15 @@
  * See LICENSE file.
  */
 
-function setDataExport(content) {
+if (!PageExtractor) PageExtractor = {};
+if (!PageExtractor.Ui) PageExtractor.Ui = {};
+if (!PageExtractor.Ui.Arff) PageExtractor.Ui.Arff = {};
+
+PageExtractor.Ui.Arff.setDataExport = function (content) {
     document.getElementById("PageExtractorDataExportContainer").style.display = "block"; // default value of a div
     document.getElementById("PageExtractorDataExport").value = content;
 }
-function hideDataExport() {
+
+PageExtractor.Ui.Arff.hideDataExport = function () {
     document.getElementById("PageExtractorDataExportContainer").style.display = "none";
 }

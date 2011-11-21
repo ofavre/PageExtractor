@@ -5,9 +5,13 @@
  * See LICENSE file.
  */
 
-var exampleHighlights = [];
+if (!PageExtractor) PageExtractor = {};
+if (!PageExtractor.Ui) PageExtractor.Ui = {};
+if (!PageExtractor.Ui.Manip) PageExtractor.Ui.Manip = {};
 
-function elementClicked(evt) {
+PageExtractor.Ui.Manip.exampleHighlights = [];
+
+PageExtractor.Ui.Manip.elementClicked = function (evt) {
     if (!evt) return;
     if (attributeValuesHas(evt.target,"class","PageExtractorExampleHighlight")) {
         if (attributeValuesHas(evt.target,"class","PageExtractorType-positive")) {
@@ -50,7 +54,7 @@ function elementClicked(evt) {
     evt.preventDefault();
 }
 
-function addNewExampleAndHighlightIt(target, isPositive) {
+PageExtractor.Ui.Manip.addNewExampleAndHighlightIt = function (target, isPositive) {
     if (!target) return;
     if (isPositive) {
         positives.push(makeExample(target, isPositive));
@@ -59,14 +63,15 @@ function addNewExampleAndHighlightIt(target, isPositive) {
     }
     exampleHighlights.push(highlightElement(target, isPositive ? "positive" : "negative"));
 }
-function highlightElement(target, type) {
+
+PageExtractor.Ui.Manip.highlightElement = function (target, type) {
     if (!target) return;
     var h = document.createElement("div");
     getDataFrom(h)["target"] = target;
     getDataFrom(h)["type"] = type;
     if (!getDataFrom(target)["highlight"])
         getDataFrom(target)["highlight"] = {}
-        getDataFrom(target)["highlight"][type] = h;
+    getDataFrom(target)["highlight"][type] = h;
     attributeValuesAdd(target, "data-PageExtractor-types", type);
     h.className = "PageExtractorExampleHighlight PageExtractorType-" + type;
     // Calculate the overall offset, by walking up the parents
@@ -79,45 +84,46 @@ function highlightElement(target, type) {
         curr = curr.offsetParent;
     }
     if (curr == null) h.style.position = "fixed";
-                    h.style.top = top+"px";
+    h.style.top = top+"px";
     h.style.left = left+"px";
     h.style.width = target.offsetWidth+"px";
     h.style.height = target.offsetHeight+"px";
     document.body.appendChild(h); // adding to target.offsetParent would be simpler, but some elements may not accept it, and their style may affect it's position
     return h;
 }
-function removeExampleAndHighlightFromExample(target, types) {
+PageExtractor.Ui.Manip.removeExampleAndHighlightFromExample = function (target, types) {
     if (!target) return;
-                    removeHighlight(getHighlightFromExample(target, types));
+    removeHighlight(getHighlightFromExample(target, types));
     removeExample(target, types)
 }
-function removeExampleAndHighlightFromHighlight(highlight) {
+
+PageExtractor.Ui.Manip.removeExampleAndHighlightFromHighlight = function (highlight) {
     if (!highlight) return;
-                    removeExample(getExampleFromHighlight(highlight), getTypeFromHighlight(highlight));
+    removeExample(getExampleFromHighlight(highlight), getTypeFromHighlight(highlight));
     removeHighlight(highlight);
 }
-function getHighlightFromExample(target, types) {
+PageExtractor.Ui.Manip.getHighlightFromExample = function (target, types) {
     if (!target) return;
-                    if (!types) types = ["positive", "negative", "result"];
-                        if (!(types instanceof Array)) types = [types];
-                        var data = getDataFrom(target);
-                    if (!data || !data["highlight"]) return undefined;
-                    for (var i = 0 ; i < types.length ; i++)
-                        if (data["highlight"][types[i]])
-        return data["highlight"][types[i]];
+    if (!types) types = ["positive", "negative", "result"];
+    if (!(types instanceof Array)) types = [types];
+    var data = getDataFrom(target);
+    if (!data || !data["highlight"]) return undefined;
+    for (var i = 0 ; i < types.length ; i++)
+        if (data["highlight"][types[i]])
+            return data["highlight"][types[i]];
     return undefined;
 }
-function getTypeFromHighlight(highlight) {
+PageExtractor.Ui.Manip.getTypeFromHighlight = function (highlight) {
     if (!highlight) return;
     var data = getDataFrom(highlight);
     return data ? data["type"] : undefined;
 }
-function getExampleFromHighlight(highlight) {
+PageExtractor.Ui.Manip.getExampleFromHighlight = function (highlight) {
     if (!highlight) return;
     var data = getDataFrom(highlight);
     return data ? data["target"] : undefined;
 }
-function removeExample(target, fromTypes) {
+PageExtractor.Ui.Manip.removeExample = function (target, fromTypes) {
     if (!target) return;
     if (!fromTypes) fromTypes = ["positive", "negative", "result"];
     if (!(fromTypes instanceof Array)) fromTypes = [fromTypes];
@@ -142,7 +148,7 @@ function removeExample(target, fromTypes) {
     }
     attributeValuesSet(target, "data-PageExtractor-types", types);
 }
-function removeHighlight(highlight) {
+PageExtractor.Ui.Manip.removeHighlight = function (highlight) {
     if (!highlight) return;
     if (highlight instanceof Array) {
         for (var i = 0 ; i < highlight.length ; i++)
@@ -158,7 +164,7 @@ function removeHighlight(highlight) {
     removeDataFrom(highlight);
     highlight.parentNode.removeChild(highlight);
 }
-function clearExamples() {
+PageExtractor.Ui.Manip.clearExamples = function () {
     for (i = 0 ; i < exampleHighlights.length ; i++) {
         exampleHighlights[i].parentNode.removeChild(exampleHighlights[i]);
     }
@@ -168,23 +174,25 @@ function clearExamples() {
 }
 
 
-var results = {};
-var highlights = []
-function clearResults() {
+PageExtractor.Ui.Manip.results = {};
+PageExtractor.Ui.Manip.highlights = []
+
+PageExtractor.Ui.Manip.clearResults = function () {
     for (i = 0 ; i < highlights.length ; i++) {
         highlights[i].parentNode.removeChild(highlights[i]);
     }
     results = [];
     highlights = [];
 }
-function highlightResults(results) {
+
+PageExtractor.Ui.Manip.highlightResults = function (results) {
     for (var i = 0 ; i < results.length ; i++)
         highlights.push(highlightElement(results[i], "result"));
 }
 
 
 
-function learn() {
+PageExtractor.Ui.Manip.learn = function () {
     clearResults();
     //var tmprslt = testRule('/html/body//'+positives[0].data[positives[0].data.length-1].tag+'[contains(concat(" ",@class," "),"'+positives[0].data[positives[0].data.length-1].classes[0]+'")]');
     var tmprslt = testRule('/html/body//'+positives[0].data[positives[0].data.length-1].tag);
@@ -194,7 +202,7 @@ function learn() {
             results.push(tmprslt.elements[i]);
         highlightResults(results);
     alert(results.length+" results");
-    
+
     /*
      * Try using classes and hierarchy first.
      *  - Search for anything (like '/html/body//TAG')

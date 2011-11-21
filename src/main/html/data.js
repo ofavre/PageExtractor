@@ -5,11 +5,16 @@
  * See LICENSE file.
  */
 
+if (!PageExtractor) PageExtractor = {};
+if (!PageExtractor.Html) PageExtractor.Html = {};
+if (!PageExtractor.Html.Data) PageExtractor.Html.Data = {};
+
 // Inspired by jQuery.data()
-var dataCache = {};
-var next_uuid = 0;
-var recyclable_uuids = [];
-function getDataFrom(node) {
+PageExtractor.Html.Data.dataCache = {};
+PageExtractor.Html.Data.next_uuid = 0;
+PageExtractor.Html.Data.recyclable_uuids = [];
+
+PageExtractor.Html.Data.getDataFrom = function (node) {
     if (!node) return undefined;
     if (!node.hasAttribute("data-PageExtractor-uuid")) {
         if (recyclable_uuids.length > 0)
@@ -26,7 +31,8 @@ function getDataFrom(node) {
     }
     return rtn;
 }
-function hasDataFrom(node) {
+
+PageExtractor.Html.Data.hasDataFrom = function (node) {
     if (!node || !node.hasAttribute("data-PageExtractor-uuid")) return false;
     uuid = parseInt(node.getAttribute("data-PageExtractor-uuid"));
     if (!dataCache[uuid]) {
@@ -37,7 +43,8 @@ function hasDataFrom(node) {
     }
     return true;
 }
-function removeDataFrom(node) {
+
+PageExtractor.Html.Data.removeDataFrom = function (node) {
     if (!node || !node.hasAttribute("data-PageExtractor-uuid")) return;
     uuid = parseInt(node.getAttribute("data-PageExtractor-uuid"));
     node.removeAttribute("data-PageExtractor-uuid");

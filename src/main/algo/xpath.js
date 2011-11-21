@@ -5,7 +5,11 @@
  * See LICENSE file.
  */
 
-function testRule(xpath) {
+if (!PageExtractor) PageExtractor = {};
+if (!PageExtractor.Algo) PageExtractor.Algo = {};
+if (!PageExtractor.Algo.XPath) PageExtractor.Algo.XPath = {};
+
+PageExtractor.Algo.XPath.testRule = function (xpath) {
     var rtn = {
         length: 0,
         elements: [],
@@ -96,7 +100,7 @@ function testRule(xpath) {
     return rtn;
 }
 
-function makeXPath(target) {
+PageExtractor.Algo.XPath.makeXPath = function (target) {
     var parts = [];
     var curr = target;
     while (curr && curr != document.body) {
@@ -120,7 +124,8 @@ function makeXPath(target) {
     parts.reverse();
     return '/html/body/'+parts.join('/');
 }
-function getIndex(target, reverse) {
+
+PageExtractor.Algo.XPath.getIndex = function (target, reverse) {
     var idx = 0;
     var found = false;
     var siblings = target.parentNode.children;
@@ -140,7 +145,8 @@ function getIndex(target, reverse) {
     if (Math.abs(idx) <= 1 && !found) return 0; // index not necessary
     return idx;
 }
-function getSiblingsTagCount(target) {
+
+PageExtractor.Algo.XPath.getSiblingsTagCount = function (target) {
     // Returns the number of same-tagName siblings of the target
     var cnt = 0;
     var siblings = target.parentNode.children;

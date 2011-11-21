@@ -5,7 +5,11 @@
  * See LICENSE file.
  */
 
-function testRule(xpath) {
+if (!PageExtractor) PageExtractor = {};
+if (!PageExtractor.Algo) PageExtractor.Algo = {};
+if (!PageExtractor.Algo.Stats) PageExtractor.Algo.Stats = {};
+
+PageExtractor.Algo.Stats.testRule = function (xpath) {
     var rtn = {
         length: 0,
         elements: [],
@@ -97,7 +101,7 @@ function testRule(xpath) {
 }
 
 /** Similarity ([0;1]) of the two examples, using their hierarchy */
-function exampleSimilarity(exA, exB) {
+PageExtractor.Algo.Stats.exampleSimilarity = function (exA, exB) {
     var rtn = 0.0;
     var weights = 0.0;
     function addToScore(weight, score) {
@@ -129,8 +133,9 @@ function exampleSimilarity(exA, exB) {
     }
     return weights == 0 ? 0.0 : rtn / weights;
 }
+
 /** Similarity ([0;1]) of the two examples at the given levels in hierarchy */
-function exampleSameLevelSimilarity(exA, levelA, exB, levelB) {
+PageExtractor.Algo.Stats.exampleSameLevelSimilarity = function (exA, levelA, exB, levelB) {
     // Fast exit in case of elements equality
     if (exA.element_hierarchy[levelA] == exB.element_hierarchy[levelB]) return 1.0;
     var A = exA.data[levelA];

@@ -5,7 +5,10 @@
  * See LICENSE file.
  */
 
-function installCss() {
+if (!PageExtractor) PageExtractor = {};
+if (!PageExtractor.Setup) PageExtractor.Setup = {};
+
+PageExtractor.Setup.installCss = function () {
     if (!document.getElementById("PageExtractorCss")) {
         // The following call leverages a regex for chrome.extension.getURL() incrustation
         chrome.extension.sendRequest({action: "fetchExtensionFile", file: "src/css/pagecss.css"}, function(response) {
@@ -17,13 +20,15 @@ function installCss() {
         });
     }
 }
-function removeCss() {
+
+PageExtractor.Setup.removeCss = function () {
     var ctrl = document.getElementById("PageExtractorCss");
     if (!ctrl) return;
     if (!ctrl.parentNode) return;
     ctrl.parentNode.removeChild(ctrl);
 }
-function installControlPanel() {
+
+PageExtractor.Setup.installControlPanel = function () {
     chrome.extension.sendRequest({action: "fetchExtensionFile", file: "src/controlpanel/pagecontrolpanel.html"}, function(response) {
         var d = document.createElement('div');
         d.id = "PageExtractorControlPanel";
@@ -33,13 +38,15 @@ function installControlPanel() {
         initControlPanel(d);
     });
 }
-function removeControlPanel() {
+
+PageExtractor.Setup.removeControlPanel = function () {
     var ctrl = document.getElementById("PageExtractorControlPanel");
     if (!ctrl) return;
     if (!ctrl.parentNode) return;
     ctrl.parentNode.removeChild(ctrl);
 }
-function PageExtractorSetup() {
+
+PageExtractor.Setup.setup = function () {
     if (document.getElementById("PageExtractorControlPanel")) {
         console.log("PageExtractor control panel already existing");
         return;
@@ -48,7 +55,8 @@ function PageExtractorSetup() {
     document.addEventListener("click", elementClicked, true);
     installControlPanel();
 }
-function PageExtractorTearDown() {
+
+PageExtractor.Setup.tearDown = function () {
     if (!document.getElementById("PageExtractorControlPanel"))
         return;
     removeCss();
@@ -58,6 +66,6 @@ function PageExtractorTearDown() {
     clearResults();
 }
 
-PageExtractorSetup();
-
-console.log(Thing);
+/***
+ * PageExtractor.Setup.setup() is to be called once every module is loaded.
+ ***/
