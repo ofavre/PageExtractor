@@ -6,8 +6,8 @@
  */
 
 if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Algo) PageExtractor.Algo = {};
-if (!PageExtractor.Algo.Data) PageExtractor.Algo.Data = {};
+if (!PageExtractor.Algo) PageExtractor.Algo = { super: PageExtractor, root: PageExtractor };
+if (!PageExtractor.Algo.Data) PageExtractor.Algo.Data = { super: PageExtractor.Algo, root: PageExtractor };
 
 PageExtractor.Algo.Data.makeExample = function (target, isPositive) {
     var rtn = {

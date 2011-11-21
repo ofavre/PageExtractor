@@ -6,8 +6,8 @@
  */
 
 if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Algo) PageExtractor.Algo = {};
-if (!PageExtractor.Algo.Stats) PageExtractor.Algo.Stats = {};
+if (!PageExtractor.Algo) PageExtractor.Algo = { super: PageExtractor, root: PageExtractor };
+if (!PageExtractor.Algo.Stats) PageExtractor.Algo.Stats = { super: PageExtractor.Algo, root: PageExtractor };
 
 PageExtractor.Algo.Stats.testRule = function (xpath) {
     var rtn = {

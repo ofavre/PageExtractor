@@ -6,8 +6,8 @@
  */
 
 if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Ui) PageExtractor.Ui = {};
-if (!PageExtractor.Ui.Manip) PageExtractor.Ui.Manip = {};
+if (!PageExtractor.Ui) PageExtractor.Ui = { super: PageExtractor, root: PageExtractor };
+if (!PageExtractor.Ui.Manip) PageExtractor.Ui.Manip = { super: PageExtractor.Ui, root: PageExtractor };
 
 PageExtractor.Ui.Manip.exampleHighlights = [];
 

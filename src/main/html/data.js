@@ -6,8 +6,8 @@
  */
 
 if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Html) PageExtractor.Html = {};
-if (!PageExtractor.Html.Data) PageExtractor.Html.Data = {};
+if (!PageExtractor.Html) PageExtractor.Html = { super: PageExtractor, root: PageExtractor };
+if (!PageExtractor.Html.Data) PageExtractor.Html.Data = { super: PageExtractor.Html, root: PageExtractor };
 
 // Inspired by jQuery.data()
 PageExtractor.Html.Data.dataCache = {};

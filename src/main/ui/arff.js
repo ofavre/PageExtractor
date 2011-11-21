@@ -6,8 +6,8 @@
  */
 
 if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Ui) PageExtractor.Ui = {};
-if (!PageExtractor.Ui.Arff) PageExtractor.Ui.Arff = {};
+if (!PageExtractor.Ui) PageExtractor.Ui = { super: PageExtractor, root: PageExtractor };
+if (!PageExtractor.Ui.Arff) PageExtractor.Ui.Arff = { super: PageExtractor.Ui, root: PageExtractor };
 
 PageExtractor.Ui.Arff.setDataExport = function (content) {
     document.getElementById("PageExtractorDataExportContainer").style.display = "block"; // default value of a div

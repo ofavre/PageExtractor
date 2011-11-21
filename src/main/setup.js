@@ -6,7 +6,7 @@
  */
 
 if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Setup) PageExtractor.Setup = {};
+if (!PageExtractor.Setup) PageExtractor.Setup = { super: PageExtractor, root: PageExtractor };
 
 PageExtractor.Setup.installCss = function () {
     if (!document.getElementById("PageExtractorCss")) {

@@ -6,8 +6,8 @@
  */
 
 if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Html) PageExtractor.Html = {};
-if (!PageExtractor.Html.Attrs) PageExtractor.Html.Attrs = {};
+if (!PageExtractor.Html) PageExtractor.Html = { super: PageExtractor, root: PageExtractor };
+if (!PageExtractor.Html.Attrs) PageExtractor.Html.Attrs = { super: PageExtractor.Html, root: PageExtractor };
 
 PageExtractor.Html.Attrs.attributeValuesHas = function (target, attribute, values, all) {
     if (!(values instanceof Array))

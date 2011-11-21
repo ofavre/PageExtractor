@@ -6,7 +6,7 @@
  */
 
 if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Algo) PageExtractor.Algo = {};
+if (!PageExtractor.Algo) PageExtractor.Algo = { super: PageExtractor, root: PageExtractor };
 
 PageExtractor.Algo.positives = [];
 PageExtractor.Algo.negatives = [];
