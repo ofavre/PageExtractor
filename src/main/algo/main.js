@@ -10,17 +10,15 @@ if (!PageExtractor.Algo) PageExtractor.Algo = { super: PageExtractor, root: Page
 
 PageExtractor.Algo.positives = [];
 PageExtractor.Algo.negatives = [];
+PageExtractor.Algo.results = [];
 
 PageExtractor.Algo.learn = function () {
-    clearResults();
     //var tmprslt = testRule('/html/body//'+positives[0].data[positives[0].data.length-1].tag+'[contains(concat(" ",@class," "),"'+positives[0].data[positives[0].data.length-1].classes[0]+'")]');
     var tmprslt = testRule('/html/body//'+positives[0].data[positives[0].data.length-1].tag);
     console.log(tmprslt);
     for (var i = 0 ; i < tmprslt.length ; i++)
         if (tmprslt.stats.similarity.positives_as_ref.by_elmt.max[i] > tmprslt.stats.similarity.negatives_as_ref.by_elmt.max[i])
             results.push(tmprslt.elements[i]);
-    highlightResults(results);
-    alert(results.length+" results");
 
     /*
      * Try using classes and hierarchy first.
