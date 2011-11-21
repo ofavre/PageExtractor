@@ -9,7 +9,7 @@ if (!PageExtractor) PageExtractor = {};
 if (!PageExtractor.Algo) PageExtractor.Algo = { super: PageExtractor, root: PageExtractor };
 if (!PageExtractor.Algo.Stats) PageExtractor.Algo.Stats = { super: PageExtractor.Algo, root: PageExtractor };
 
-PageExtractor.Algo.Stats.testRule = function (xpath) {
+PageExtractor.Algo.Stats.statElements = function (elements) {
     var rtn = {
         length: 0,
         elements: [],
@@ -34,6 +34,8 @@ PageExtractor.Algo.Stats.testRule = function (xpath) {
             }
         }
     };
+    // Copy elements
+    rtn.elements = elements.slice();
     // Init 2D arrays
     for (var i = 0 ; i < positives.length ; i++) {
         rtn.stats.similarity.positives_as_ref.val_by_ref_by_elmt.push([]);
@@ -45,11 +47,7 @@ PageExtractor.Algo.Stats.testRule = function (xpath) {
         rtn.stats.similarity.negatives_as_ref.by_ref.avg.push(0.0);
         rtn.stats.similarity.negatives_as_ref.by_ref.max.push(0.0);
     }
-    // Collect elements (any modification to them will break the xpath results iterator)
-    var x = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-    var r;
-    while (r = x.iterateNext())
-        rtn.elements.push(r);
+
     // Collect statistics
     rtn.length = rtn.elements.length;
     var avg;
