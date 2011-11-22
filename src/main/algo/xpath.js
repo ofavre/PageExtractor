@@ -23,12 +23,12 @@ PageExtractor.Algo.XPath.makeXPath = function (target) {
     var parts = [];
     var curr = target;
     while (curr && curr != document.body) {
-        var classes = attributeValuesGet(curr, "class");
+        var classes = this.root.Html.Attrs.attributeValuesGet(curr, "class");
         if (classes.length)
             classes = 'contains(concat(" ",@class," ")," ' + classes.join(' ") and contains(concat(" ",@class," ")," ') + ' ")';
         else
             classes = undefined;
-        var idx = getIndex(curr);
+        var idx = this.getIndex(curr);
         if (idx > 0)
             if (classes)
                 parts.push(curr.tagName.toLowerCase()+'[position()='+idx+' and '+classes+']');

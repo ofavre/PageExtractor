@@ -174,7 +174,7 @@ PageExtractor.Algo.learn = function () {
         }
     }
     arff += instances.join('\n');
-    setDataExport(arff);
+    this.root.Ui.Arff.setDataExport(arff);
 
     best = data[data_sortedIdx[best]];
     // TODO: Use the rule, check validity, recurse
@@ -229,6 +229,6 @@ PageExtractor.Algo.learn = function () {
         instances.push(data.join(","));
     }
     arff += instances.join("\n");
-    setDataExport(arff);
+    this.root.Ui.Arff.setDataExport(arff);
     */
 }

@@ -52,7 +52,7 @@ PageExtractor.Algo.Stats.statElements = function (elements) {
     rtn.length = rtn.elements.length;
     var avg;
     for (var i = 0 ; i < rtn.length ; i++) {
-        var ex = makeExample(rtn.elements[i]);
+        var ex = this.super.Data.makeExample(rtn.elements[i]);
         if (ex == false) {
             // Skip control panel's elements
             rtn.elements.splice(i,1);
@@ -64,7 +64,7 @@ PageExtractor.Algo.Stats.statElements = function (elements) {
         avg = 0.0;
         rtn.stats.similarity.positives_as_ref.by_elmt.max.push(0.0);
         for (var p = 0 ; p < positives.length ; p++) {
-            var sim = exampleSimilarity(rtn.data[i], positives[p]);
+            var sim = this.exampleSimilarity(rtn.data[i], positives[p]);
             avg += sim / positives.length;
             rtn.stats.similarity.positives_as_ref.val_by_ref_by_elmt[p].push(sim);
             rtn.stats.similarity.positives_as_ref.by_ref.avg[p] += sim / rtn.length;
@@ -80,7 +80,7 @@ PageExtractor.Algo.Stats.statElements = function (elements) {
         avg = 0.0;
         rtn.stats.similarity.negatives_as_ref.by_elmt.max.push(0.0);
         for (var p = 0 ; p < negatives.length ; p++) {
-            var sim = exampleSimilarity(rtn.data[i], negatives[p]);
+            var sim = this.exampleSimilarity(rtn.data[i], negatives[p]);
             avg += sim / negatives.length;
             rtn.stats.similarity.negatives_as_ref.val_by_ref_by_elmt[p].push(sim);
             rtn.stats.similarity.negatives_as_ref.by_ref.avg[p] += sim / rtn.length;
@@ -119,8 +119,8 @@ PageExtractor.Algo.Stats.exampleSimilarity = function (exA, exB) {
         // i*r is depth from leaf (of exA and exB) to nth step shallow
         var w = (i+1.0)/Math.max(dA, dB);
         subw += w;
-        sub += w * exampleSameLevelSimilarity(exA, i, exB, i);
-        subr += w * exampleSameLevelSimilarity(exA, iAr, exB, iBr);
+        sub += w * this.exampleSameLevelSimilarity(exA, i, exB, i);
+        subr += w * this.exampleSameLevelSimilarity(exA, iAr, exB, iBr);
     }
     if (subw == 0) {
         addToScore(1.0, 0.0);
@@ -130,6 +130,14 @@ PageExtractor.Algo.Stats.exampleSimilarity = function (exA, exB) {
         addToScore(subw, subr/subw);
     }
     return weights == 0 ? 0.0 : rtn / weights;
+}
+
+/** Normalized log difference of two positive numbers */
+PageExtractor.Algo.Stats.logDiffNormed = function(x,y) {
+    if (x == 0 && y == 0) return 1.0;
+    var lx = Math.log(1+x);
+    var ly = Math.log(1+y);
+    return 1.0 - Math.abs(lx-ly)/Math.max(lx,ly);
 }
 
 /** Similarity ([0;1]) of the two examples at the given levels in hierarchy */
@@ -156,14 +164,8 @@ PageExtractor.Algo.Stats.exampleSameLevelSimilarity = function (exA, levelA, exB
     else
         addToScore(Math.sqrt(over), sub/over);
     // Position_max, children_count and text_len normed log difference
-        function logDiffNormed(x,y) {
-            if (x == 0 && y == 0) return 1.0;
-            var lx = Math.log(1+x);
-            var ly = Math.log(1+y);
-            return 1.0 - Math.abs(lx-ly)/Math.max(lx,ly);
-        }
-        addToScore(1.5, logDiffNormed(A.position_max, B.position_max));
-        addToScore(1.0, logDiffNormed(A.children_count, B.children_count));
-        addToScore(0.0, logDiffNormed(A.text_len, B.text_len)); // FIXME Find good weight (0.5 ?)
-        return weights == 0 ? 0.0 : rtn / weights;
+    addToScore(1.5, this.logDiffNormed(A.position_max, B.position_max));
+    addToScore(1.0, this.logDiffNormed(A.children_count, B.children_count));
+    addToScore(0.0, this.logDiffNormed(A.text_len, B.text_len)); // FIXME Find good weight (0.5 ?)
+    return weights == 0 ? 0.0 : rtn / weights;
 }

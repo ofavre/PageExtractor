@@ -20,14 +20,14 @@ PageExtractor.Algo.Data.makeExample = function (target, isPositive) {
     while (curr && curr != document.body) {
         if (curr.id == "PageExtractorControlPanel") return false; // skip control panel's elements
         rtn.element_hierarchy.push(curr);
-        var datas = getDataFrom(curr);
+        var datas = this.root.Html.Data.getDataFrom(curr);
         if (datas.data == undefined) {
             datas.data = {
                 tag: curr.tagName.toLowerCase(),
-                classes: attributeValuesGet(curr, "class"),
-                position: getIndex(curr),
-                position_reversed: getIndex(curr, true),
-                position_max: getSiblingsTagCount(curr),
+                classes: this.root.Html.Attrs.attributeValuesGet(curr, "class"),
+                position: this.super.XPath.getIndex(curr),
+                position_reversed: this.super.XPath.getIndex(curr, true),
+                position_max: this.super.XPath.getSiblingsTagCount(curr),
                 children_count: curr.children.length,
                 text_len: curr.textContent.replace(/[\s\n]+/,' ').trim().length
             };

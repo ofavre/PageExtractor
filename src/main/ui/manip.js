@@ -13,28 +13,28 @@ PageExtractor.Ui.Manip.exampleHighlights = [];
 
 PageExtractor.Ui.Manip.elementClicked = function (evt) {
     if (!evt) return;
-    if (attributeValuesHas(evt.target,"class","PageExtractorExampleHighlight")) {
-        if (attributeValuesHas(evt.target,"class","PageExtractorType-positive")) {
+    if (this.root.Html.Attrs.attributeValuesHas(evt.target,"class","PageExtractorExampleHighlight")) {
+        if (this.root.Html.Attrs.attributeValuesHas(evt.target,"class","PageExtractorType-positive")) {
             if (evt.ctrlKey)
-                removeExampleAndHighlightFromHighlight(evt.target);
-        } else if (attributeValuesHas(evt.target,"class","PageExtractorType-negative")) {
+                this.removeExampleAndHighlightFromHighlight(evt.target);
+        } else if (this.root.Html.Attrs.attributeValuesHas(evt.target,"class","PageExtractorType-negative")) {
             if (!evt.ctrlKey)
-                removeExampleAndHighlightFromHighlight(evt.target);
-        } else if (attributeValuesHas(evt.target,"class","PageExtractorType-result")) {
+                this.removeExampleAndHighlightFromHighlight(evt.target);
+        } else if (this.root.Html.Attrs.attributeValuesHas(evt.target,"class","PageExtractorType-result")) {
             // Get example from the result highlight
-            var target = getExampleFromHighlight(evt.target);
+            var target = this.getExampleFromHighlight(evt.target);
             // Remove from other type, if present
             // if not, add to new type, if not already present
             var removeType = evt.ctrlKey ? "positive" : "negative";
             var addType = evt.ctrlKey ? "negative" : "positive";
             var done = false;
-            if (getDataFrom(target)["highlight"] && getDataFrom(target)["highlight"][removeType]) {
-                removeExample(target, removeType);
-                removeHighlight(getHighlightFromExample(target, removeType));
+            if (this.root.Html.Data.getDataFrom(target)["highlight"] && this.root.Html.Data.getDataFrom(target)["highlight"][removeType]) {
+                this.removeExample(target, removeType);
+                this.removeHighlight(this.getHighlightFromExample(target, removeType));
                 done = true;
             }
-            if (!done && getDataFrom(target)["highlight"] && !getDataFrom(target)["highlight"][addType]) {
-                addNewExampleAndHighlightIt(target, !evt.ctrlKey);
+            if (!done && this.root.Html.Data.getDataFrom(target)["highlight"] && !this.root.Html.Data.getDataFrom(target)["highlight"][addType]) {
+                this.addNewExampleAndHighlightIt(target, !evt.ctrlKey);
             }
             // We left the result highlight intact
         }
@@ -42,13 +42,13 @@ PageExtractor.Ui.Manip.elementClicked = function (evt) {
         // Make sure we're not clicking on a element of the control panel
         curr = evt.target;
         while (curr && curr != document.body) {
-            if (attributeValuesHas(curr,"class","PageExtractorControlPanel"))
+            if (this.root.Html.Attrs.attributeValuesHas(curr,"class","PageExtractorControlPanel"))
                 // Exit the function, let click work normally
             return;
             curr = curr.parentNode;
         }
         // We're on a page element, create a positive/negative example from it
-        addNewExampleAndHighlightIt(evt.target, !evt.ctrlKey);
+        this.addNewExampleAndHighlightIt(evt.target, !evt.ctrlKey);
     }
     evt.stopPropagation();
     evt.preventDefault();
@@ -57,22 +57,22 @@ PageExtractor.Ui.Manip.elementClicked = function (evt) {
 PageExtractor.Ui.Manip.addNewExampleAndHighlightIt = function (target, isPositive) {
     if (!target) return;
     if (isPositive) {
-        positives.push(makeExample(target, isPositive));
+        positives.push(this.root.Algo.Data.makeExample(target, isPositive));
     } else {
-        negatives.push(makeExample(target, isPositive));
+        negatives.push(this.root.Algo.Data.makeExample(target, isPositive));
     }
-    exampleHighlights.push(highlightElement(target, isPositive ? "positive" : "negative"));
+    exampleHighlights.push(this.highlightElement(target, isPositive ? "positive" : "negative"));
 }
 
 PageExtractor.Ui.Manip.highlightElement = function (target, type) {
     if (!target) return;
     var h = document.createElement("div");
-    getDataFrom(h)["target"] = target;
-    getDataFrom(h)["type"] = type;
-    if (!getDataFrom(target)["highlight"])
-        getDataFrom(target)["highlight"] = {}
-    getDataFrom(target)["highlight"][type] = h;
-    attributeValuesAdd(target, "data-PageExtractor-types", type);
+    this.root.Html.Data.getDataFrom(h)["target"] = target;
+    this.root.Html.Data.getDataFrom(h)["type"] = type;
+    if (!this.root.Html.Data.getDataFrom(target)["highlight"])
+        this.root.Html.Data.getDataFrom(target)["highlight"] = {}
+    this.root.Html.Data.getDataFrom(target)["highlight"][type] = h;
+    this.root.Html.Attrs.attributeValuesAdd(target, "data-PageExtractor-types", type);
     h.className = "PageExtractorExampleHighlight PageExtractorType-" + type;
     // Calculate the overall offset, by walking up the parents
     var curr = target;
@@ -93,20 +93,20 @@ PageExtractor.Ui.Manip.highlightElement = function (target, type) {
 }
 PageExtractor.Ui.Manip.removeExampleAndHighlightFromExample = function (target, types) {
     if (!target) return;
-    removeHighlight(getHighlightFromExample(target, types));
-    removeExample(target, types)
+    this.removeHighlight(this.getHighlightFromExample(target, types));
+    this.removeExample(target, types)
 }
 
 PageExtractor.Ui.Manip.removeExampleAndHighlightFromHighlight = function (highlight) {
     if (!highlight) return;
-    removeExample(getExampleFromHighlight(highlight), getTypeFromHighlight(highlight));
-    removeHighlight(highlight);
+    this.removeExample(this.getExampleFromHighlight(highlight), this.getTypeFromHighlight(highlight));
+    this.removeHighlight(highlight);
 }
 PageExtractor.Ui.Manip.getHighlightFromExample = function (target, types) {
     if (!target) return;
     if (!types) types = ["positive", "negative", "result"];
     if (!(types instanceof Array)) types = [types];
-    var data = getDataFrom(target);
+    var data = this.root.Html.Data.getDataFrom(target);
     if (!data || !data["highlight"]) return undefined;
     for (var i = 0 ; i < types.length ; i++)
         if (data["highlight"][types[i]])
@@ -115,12 +115,12 @@ PageExtractor.Ui.Manip.getHighlightFromExample = function (target, types) {
 }
 PageExtractor.Ui.Manip.getTypeFromHighlight = function (highlight) {
     if (!highlight) return;
-    var data = getDataFrom(highlight);
+    var data = this.root.Html.Data.getDataFrom(highlight);
     return data ? data["type"] : undefined;
 }
 PageExtractor.Ui.Manip.getExampleFromHighlight = function (highlight) {
     if (!highlight) return;
-    var data = getDataFrom(highlight);
+    var data = this.root.Html.Data.getDataFrom(highlight);
     return data ? data["target"] : undefined;
 }
 PageExtractor.Ui.Manip.removeExample = function (target, fromTypes) {
@@ -129,11 +129,11 @@ PageExtractor.Ui.Manip.removeExample = function (target, fromTypes) {
     if (!(fromTypes instanceof Array)) fromTypes = [fromTypes];
     if (target instanceof Array) {
         for (var i = 0 ; i < target.length ; i++)
-            removeExample(target[i], fromTypes);
+            this.removeExample(target[i], fromTypes);
         return;
     }
     var froms = { positive: positives, negative: negatives, result: results };
-    var types = attributeValuesGet(target, "data-PageExtractor-types");
+    var types = this.root.Html.Attrs.attributeValuesGet(target, "data-PageExtractor-types");
     for (var t = 0 ; t < types.length ; t++) {
         if (fromTypes.indexOf(types[t]) < 0) continue;
         var from = froms[types[t]];
@@ -146,22 +146,22 @@ PageExtractor.Ui.Manip.removeExample = function (target, fromTypes) {
         types.splice(t, 1);
         t--;
     }
-    attributeValuesSet(target, "data-PageExtractor-types", types);
+    this.root.Html.Attrs.attributeValuesSet(target, "data-PageExtractor-types", types);
 }
 PageExtractor.Ui.Manip.removeHighlight = function (highlight) {
     if (!highlight) return;
     if (highlight instanceof Array) {
         for (var i = 0 ; i < highlight.length ; i++)
-            removeHighlight(highlight[i]);
+            this.removeHighlight(highlight[i]);
         return;
     }
-    var type = getDataFrom(highlight)["type"];
-    delete getDataFrom(getExampleFromHighlight(highlight))["highlight"][type];
+    var type = this.root.Html.Data.getDataFrom(highlight)["type"];
+    delete this.root.Html.Data.getDataFrom(this.getExampleFromHighlight(highlight))["highlight"][type];
     var froms = { positive: exampleHighlights, negative: exampleHighlights, result: highlights };
     var from = froms[type];
     var idx = from.indexOf(highlight);
     if (idx >= 0) from.splice(idx, 1);
-    removeDataFrom(highlight);
+    this.root.Html.Data.removeDataFrom(highlight);
     highlight.parentNode.removeChild(highlight);
 }
 PageExtractor.Ui.Manip.clearExamples = function () {
@@ -186,7 +186,7 @@ PageExtractor.Ui.Manip.clearResults = function () {
 
 PageExtractor.Ui.Manip.highlightResults = function (results) {
     for (var i = 0 ; i < results.length ; i++)
-        highlights.push(highlightElement(results[i], "result"));
+        highlights.push(this.highlightElement(results[i], "result"));
 }
 
 
