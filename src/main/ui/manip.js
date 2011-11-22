@@ -165,7 +165,7 @@ window.PageExtractor.Ui.Manip.removeHighlight = function (highlight) {
     highlight.parentNode.removeChild(highlight);
 }
 window.PageExtractor.Ui.Manip.clearExamples = function () {
-    for (i = 0 ; i < exampleHighlights.length ; i++) {
+    for (i = 0 ; i < this.exampleHighlights.length ; i++) {
         this.exampleHighlights[i].parentNode.removeChild(this.exampleHighlights[i]);
     }
     this.exampleHighlights = [];
