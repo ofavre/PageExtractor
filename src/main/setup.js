@@ -5,10 +5,10 @@
  * See LICENSE file.
  */
 
-if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Setup) PageExtractor.Setup = { super: PageExtractor, root: PageExtractor };
+if (!window.PageExtractor) window.PageExtractor = {};
+if (!window.PageExtractor.Setup) window.PageExtractor.Setup = { super: PageExtractor, root: window.PageExtractor };
 
-PageExtractor.Setup.installCss = function () {
+window.PageExtractor.Setup.installCss = function () {
     if (!document.getElementById("PageExtractorCss")) {
         // The following call leverages a regex for chrome.extension.getURL() incrustation
         chrome.extension.sendRequest({action: "fetchExtensionFile", file: "src/css/pagecss.css"}, function(response) {
@@ -21,14 +21,14 @@ PageExtractor.Setup.installCss = function () {
     }
 }
 
-PageExtractor.Setup.removeCss = function () {
+window.PageExtractor.Setup.removeCss = function () {
     var ctrl = document.getElementById("PageExtractorCss");
     if (!ctrl) return;
     if (!ctrl.parentNode) return;
     ctrl.parentNode.removeChild(ctrl);
 }
 
-PageExtractor.Setup.installControlPanel = function () {
+window.PageExtractor.Setup.installControlPanel = function () {
     var that = this;
     chrome.extension.sendRequest({action: "fetchExtensionFile", file: "src/controlpanel/pagecontrolpanel.html"}, function(response) {
         var d = document.createElement('div');
@@ -40,14 +40,14 @@ PageExtractor.Setup.installControlPanel = function () {
     });
 }
 
-PageExtractor.Setup.removeControlPanel = function () {
+window.PageExtractor.Setup.removeControlPanel = function () {
     var ctrl = document.getElementById("PageExtractorControlPanel");
     if (!ctrl) return;
     if (!ctrl.parentNode) return;
     ctrl.parentNode.removeChild(ctrl);
 }
 
-PageExtractor.Setup.setup = function () {
+window.PageExtractor.Setup.setup = function () {
     if (document.getElementById("PageExtractorControlPanel")) {
         console.log("PageExtractor control panel already existing");
         return;
@@ -57,7 +57,7 @@ PageExtractor.Setup.setup = function () {
     this.installControlPanel();
 }
 
-PageExtractor.Setup.tearDown = function () {
+window.PageExtractor.Setup.tearDown = function () {
     if (!document.getElementById("PageExtractorControlPanel"))
         return;
     this.removeCss();
@@ -68,5 +68,5 @@ PageExtractor.Setup.tearDown = function () {
 }
 
 /***
- * PageExtractor.Setup.setup() is to be called once every module is loaded.
+ * window.PageExtractor.Setup.setup() is to be called once every module is loaded.
  ***/

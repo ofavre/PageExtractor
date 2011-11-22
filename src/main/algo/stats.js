@@ -5,11 +5,11 @@
  * See LICENSE file.
  */
 
-if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Algo) PageExtractor.Algo = { super: PageExtractor, root: PageExtractor };
-if (!PageExtractor.Algo.Stats) PageExtractor.Algo.Stats = { super: PageExtractor.Algo, root: PageExtractor };
+if (!window.PageExtractor) window.PageExtractor = {};
+if (!window.PageExtractor.Algo) window.PageExtractor.Algo = { super: PageExtractor, root: window.PageExtractor };
+if (!window.PageExtractor.Algo.Stats) window.PageExtractor.Algo.Stats = { super: window.PageExtractor.Algo, root: window.PageExtractor };
 
-PageExtractor.Algo.Stats.statElements = function (elements) {
+window.PageExtractor.Algo.Stats.statElements = function (elements) {
     var rtn = {
         length: 0,
         elements: [],
@@ -99,7 +99,7 @@ PageExtractor.Algo.Stats.statElements = function (elements) {
 }
 
 /** Similarity ([0;1]) of the two examples, using their hierarchy */
-PageExtractor.Algo.Stats.exampleSimilarity = function (exA, exB) {
+window.PageExtractor.Algo.Stats.exampleSimilarity = function (exA, exB) {
     var rtn = 0.0;
     var weights = 0.0;
     function addToScore(weight, score) {
@@ -133,7 +133,7 @@ PageExtractor.Algo.Stats.exampleSimilarity = function (exA, exB) {
 }
 
 /** Normalized log difference of two positive numbers */
-PageExtractor.Algo.Stats.logDiffNormed = function(x,y) {
+window.PageExtractor.Algo.Stats.logDiffNormed = function(x,y) {
     if (x == 0 && y == 0) return 1.0;
     var lx = Math.log(1+x);
     var ly = Math.log(1+y);
@@ -141,7 +141,7 @@ PageExtractor.Algo.Stats.logDiffNormed = function(x,y) {
 }
 
 /** Similarity ([0;1]) of the two examples at the given levels in hierarchy */
-PageExtractor.Algo.Stats.exampleSameLevelSimilarity = function (exA, levelA, exB, levelB) {
+window.PageExtractor.Algo.Stats.exampleSameLevelSimilarity = function (exA, levelA, exB, levelB) {
     // Fast exit in case of elements equality
     if (exA.element_hierarchy[levelA] == exB.element_hierarchy[levelB]) return 1.0;
     var A = exA.data[levelA];

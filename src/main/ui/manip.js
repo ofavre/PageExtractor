@@ -5,13 +5,13 @@
  * See LICENSE file.
  */
 
-if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Ui) PageExtractor.Ui = { super: PageExtractor, root: PageExtractor };
-if (!PageExtractor.Ui.Manip) PageExtractor.Ui.Manip = { super: PageExtractor.Ui, root: PageExtractor };
+if (!window.PageExtractor) window.PageExtractor = {};
+if (!window.PageExtractor.Ui) window.PageExtractor.Ui = { super: PageExtractor, root: window.PageExtractor };
+if (!window.PageExtractor.Ui.Manip) window.PageExtractor.Ui.Manip = { super: window.PageExtractor.Ui, root: window.PageExtractor };
 
-PageExtractor.Ui.Manip.exampleHighlights = [];
+window.PageExtractor.Ui.Manip.exampleHighlights = [];
 
-PageExtractor.Ui.Manip.elementClicked = function (evt) {
+window.PageExtractor.Ui.Manip.elementClicked = function (evt) {
     if (!evt) return;
     if (this.root.Html.Attrs.attributeValuesHas(evt.target,"class","PageExtractorExampleHighlight")) {
         if (this.root.Html.Attrs.attributeValuesHas(evt.target,"class","PageExtractorType-positive")) {
@@ -54,7 +54,7 @@ PageExtractor.Ui.Manip.elementClicked = function (evt) {
     evt.preventDefault();
 }
 
-PageExtractor.Ui.Manip.addNewExampleAndHighlightIt = function (target, isPositive) {
+window.PageExtractor.Ui.Manip.addNewExampleAndHighlightIt = function (target, isPositive) {
     if (!target) return;
     if (isPositive) {
         positives.push(this.root.Algo.Data.makeExample(target, isPositive));
@@ -64,7 +64,7 @@ PageExtractor.Ui.Manip.addNewExampleAndHighlightIt = function (target, isPositiv
     exampleHighlights.push(this.highlightElement(target, isPositive ? "positive" : "negative"));
 }
 
-PageExtractor.Ui.Manip.highlightElement = function (target, type) {
+window.PageExtractor.Ui.Manip.highlightElement = function (target, type) {
     if (!target) return;
     var h = document.createElement("div");
     this.root.Html.Data.getDataFrom(h)["target"] = target;
@@ -91,18 +91,18 @@ PageExtractor.Ui.Manip.highlightElement = function (target, type) {
     document.body.appendChild(h); // adding to target.offsetParent would be simpler, but some elements may not accept it, and their style may affect it's position
     return h;
 }
-PageExtractor.Ui.Manip.removeExampleAndHighlightFromExample = function (target, types) {
+window.PageExtractor.Ui.Manip.removeExampleAndHighlightFromExample = function (target, types) {
     if (!target) return;
     this.removeHighlight(this.getHighlightFromExample(target, types));
     this.removeExample(target, types)
 }
 
-PageExtractor.Ui.Manip.removeExampleAndHighlightFromHighlight = function (highlight) {
+window.PageExtractor.Ui.Manip.removeExampleAndHighlightFromHighlight = function (highlight) {
     if (!highlight) return;
     this.removeExample(this.getExampleFromHighlight(highlight), this.getTypeFromHighlight(highlight));
     this.removeHighlight(highlight);
 }
-PageExtractor.Ui.Manip.getHighlightFromExample = function (target, types) {
+window.PageExtractor.Ui.Manip.getHighlightFromExample = function (target, types) {
     if (!target) return;
     if (!types) types = ["positive", "negative", "result"];
     if (!(types instanceof Array)) types = [types];
@@ -113,17 +113,17 @@ PageExtractor.Ui.Manip.getHighlightFromExample = function (target, types) {
             return data["highlight"][types[i]];
     return undefined;
 }
-PageExtractor.Ui.Manip.getTypeFromHighlight = function (highlight) {
+window.PageExtractor.Ui.Manip.getTypeFromHighlight = function (highlight) {
     if (!highlight) return;
     var data = this.root.Html.Data.getDataFrom(highlight);
     return data ? data["type"] : undefined;
 }
-PageExtractor.Ui.Manip.getExampleFromHighlight = function (highlight) {
+window.PageExtractor.Ui.Manip.getExampleFromHighlight = function (highlight) {
     if (!highlight) return;
     var data = this.root.Html.Data.getDataFrom(highlight);
     return data ? data["target"] : undefined;
 }
-PageExtractor.Ui.Manip.removeExample = function (target, fromTypes) {
+window.PageExtractor.Ui.Manip.removeExample = function (target, fromTypes) {
     if (!target) return;
     if (!fromTypes) fromTypes = ["positive", "negative", "result"];
     if (!(fromTypes instanceof Array)) fromTypes = [fromTypes];
@@ -148,7 +148,7 @@ PageExtractor.Ui.Manip.removeExample = function (target, fromTypes) {
     }
     this.root.Html.Attrs.attributeValuesSet(target, "data-PageExtractor-types", types);
 }
-PageExtractor.Ui.Manip.removeHighlight = function (highlight) {
+window.PageExtractor.Ui.Manip.removeHighlight = function (highlight) {
     if (!highlight) return;
     if (highlight instanceof Array) {
         for (var i = 0 ; i < highlight.length ; i++)
@@ -164,7 +164,7 @@ PageExtractor.Ui.Manip.removeHighlight = function (highlight) {
     this.root.Html.Data.removeDataFrom(highlight);
     highlight.parentNode.removeChild(highlight);
 }
-PageExtractor.Ui.Manip.clearExamples = function () {
+window.PageExtractor.Ui.Manip.clearExamples = function () {
     for (i = 0 ; i < exampleHighlights.length ; i++) {
         exampleHighlights[i].parentNode.removeChild(exampleHighlights[i]);
     }
@@ -174,9 +174,9 @@ PageExtractor.Ui.Manip.clearExamples = function () {
 }
 
 
-PageExtractor.Ui.Manip.highlights = []
+window.PageExtractor.Ui.Manip.highlights = []
 
-PageExtractor.Ui.Manip.clearResults = function () {
+window.PageExtractor.Ui.Manip.clearResults = function () {
     for (i = 0 ; i < highlights.length ; i++) {
         highlights[i].parentNode.removeChild(highlights[i]);
     }
@@ -184,14 +184,14 @@ PageExtractor.Ui.Manip.clearResults = function () {
     highlights = [];
 }
 
-PageExtractor.Ui.Manip.highlightResults = function (results) {
+window.PageExtractor.Ui.Manip.highlightResults = function (results) {
     for (var i = 0 ; i < results.length ; i++)
         highlights.push(this.highlightElement(results[i], "result"));
 }
 
 
 
-PageExtractor.Ui.Manip.learn = function () {
+window.PageExtractor.Ui.Manip.learn = function () {
     this.clearResults();
     this.root.Algo.learn();
     this.highlightResults(this.root.Algo.results);

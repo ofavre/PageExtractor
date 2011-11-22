@@ -5,11 +5,11 @@
  * See LICENSE file.
  */
 
-if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Html) PageExtractor.Html = { super: PageExtractor, root: PageExtractor };
-if (!PageExtractor.Html.Attrs) PageExtractor.Html.Attrs = { super: PageExtractor.Html, root: PageExtractor };
+if (!window.PageExtractor) window.PageExtractor = {};
+if (!window.PageExtractor.Html) window.PageExtractor.Html = { super: PageExtractor, root: window.PageExtractor };
+if (!window.PageExtractor.Html.Attrs) window.PageExtractor.Html.Attrs = { super: window.PageExtractor.Html, root: window.PageExtractor };
 
-PageExtractor.Html.Attrs.attributeValuesHas = function (target, attribute, values, all) {
+window.PageExtractor.Html.Attrs.attributeValuesHas = function (target, attribute, values, all) {
     if (!(values instanceof Array))
         return (" "+target.getAttribute(attribute)+" ").indexOf(" "+values+" ") >= 0;
     var vls = this.attributeValuesGet(target, attribute);
@@ -30,20 +30,20 @@ PageExtractor.Html.Attrs.attributeValuesHas = function (target, attribute, value
     return false;
 }
 
-PageExtractor.Html.Attrs.attributeValuesGet = function (target, attribute) {
+window.PageExtractor.Html.Attrs.attributeValuesGet = function (target, attribute) {
     var value = target.getAttribute(attribute);
     if (!value || value.trim() == "") return [];
     return value.trim().split(/\s+/).sort();
 }
 
-PageExtractor.Html.Attrs.attributeValuesSet = function (target, attribute, values) {
+window.PageExtractor.Html.Attrs.attributeValuesSet = function (target, attribute, values) {
     if (values instanceof Array)
         target.setAttribute(attribute, values.join(" "));
     else
         target.setAttribute(attribute, values);
 }
 
-PageExtractor.Html.Attrs.attributeValuesAdd = function (target, attribute, values) {
+window.PageExtractor.Html.Attrs.attributeValuesAdd = function (target, attribute, values) {
     if (!(values instanceof Array)) values = [values];
     var elmt_values = this.attributeValuesGet(target, attribute);
     for (var i = 0 ; i < values.length ; i++)
@@ -52,7 +52,7 @@ PageExtractor.Html.Attrs.attributeValuesAdd = function (target, attribute, value
         this.attributeValuesSet(target, attribute, elmt_values);
 }
 
-PageExtractor.Html.Attrs.attributeValuesRemove = function (target, attribute, values) {
+window.PageExtractor.Html.Attrs.attributeValuesRemove = function (target, attribute, values) {
     if (!(values instanceof Array)) values = [values];
     var elmt_values = this.attributeValuesGet(target, attribute);
     for (var i = 0 ; i < values.length ; i++) {

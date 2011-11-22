@@ -16,7 +16,7 @@ function cutSetup(info, tab) {
     chrome.tabs.executeScript(tab.id, {file:"src/main/algo/xpath.js"});
     chrome.tabs.executeScript(tab.id, {file:"src/main/algo/main.js"});
     chrome.tabs.executeScript(tab.id, {file:"src/main/setup.js"});
-    chrome.tabs.executeScript(tab.id, {code:"PageExtractor.Setup.setup();"});
+    chrome.tabs.executeScript(tab.id, {code:"window.PageExtractor.Setup.setup();"});
 }
 
 var parent = chrome.contextMenus.create({

@@ -5,14 +5,14 @@
  * See LICENSE file.
  */
 
-if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Algo) PageExtractor.Algo = { super: PageExtractor, root: PageExtractor };
+if (!window.PageExtractor) window.PageExtractor = {};
+if (!window.PageExtractor.Algo) window.PageExtractor.Algo = { super: PageExtractor, root: window.PageExtractor };
 
-PageExtractor.Algo.positives = [];
-PageExtractor.Algo.negatives = [];
-PageExtractor.Algo.results = [];
+window.PageExtractor.Algo.positives = [];
+window.PageExtractor.Algo.negatives = [];
+window.PageExtractor.Algo.results = [];
 
-PageExtractor.Algo.learn = function () {
+window.PageExtractor.Algo.learn = function () {
     //var tmprslt = testRule('/html/body//'+positives[0].data[positives[0].data.length-1].tag+'[contains(concat(" ",@class," "),"'+positives[0].data[positives[0].data.length-1].classes[0]+'")]');
     var tmprslt = this.Stats.statElements(this.XPath.getResults('/html/body//'+positives[0].data[positives[0].data.length-1].tag));
     console.log(tmprslt);

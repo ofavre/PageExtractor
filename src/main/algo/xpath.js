@@ -5,11 +5,11 @@
  * See LICENSE file.
  */
 
-if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Algo) PageExtractor.Algo = { super: PageExtractor, root: PageExtractor };
-if (!PageExtractor.Algo.XPath) PageExtractor.Algo.XPath = { super: PageExtractor.Algo, root: PageExtractor };
+if (!window.PageExtractor) window.PageExtractor = {};
+if (!window.PageExtractor.Algo) window.PageExtractor.Algo = { super: PageExtractor, root: window.PageExtractor };
+if (!window.PageExtractor.Algo.XPath) window.PageExtractor.Algo.XPath = { super: window.PageExtractor.Algo, root: window.PageExtractor };
 
-PageExtractor.Algo.XPath.getResults = function (xpath) {
+window.PageExtractor.Algo.XPath.getResults = function (xpath) {
     var rtn =[];
     // Collect elements (any modification to them will break the xpath results iterator)
     var x = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
@@ -19,7 +19,7 @@ PageExtractor.Algo.XPath.getResults = function (xpath) {
     return rtn;
 }
 
-PageExtractor.Algo.XPath.makeXPath = function (target) {
+window.PageExtractor.Algo.XPath.makeXPath = function (target) {
     var parts = [];
     var curr = target;
     while (curr && curr != document.body) {
@@ -44,7 +44,7 @@ PageExtractor.Algo.XPath.makeXPath = function (target) {
     return '/html/body/'+parts.join('/');
 }
 
-PageExtractor.Algo.XPath.getIndex = function (target, reverse) {
+window.PageExtractor.Algo.XPath.getIndex = function (target, reverse) {
     var idx = 0;
     var found = false;
     var siblings = target.parentNode.children;
@@ -65,7 +65,7 @@ PageExtractor.Algo.XPath.getIndex = function (target, reverse) {
     return idx;
 }
 
-PageExtractor.Algo.XPath.getSiblingsTagCount = function (target) {
+window.PageExtractor.Algo.XPath.getSiblingsTagCount = function (target) {
     // Returns the number of same-tagName siblings of the target
     var cnt = 0;
     var siblings = target.parentNode.children;

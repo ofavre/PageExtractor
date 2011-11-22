@@ -5,10 +5,10 @@
  * See LICENSE file.
  */
 
-if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.ControlPanel) PageExtractor.ControlPanel = { super: PageExtractor, root: PageExtractor };
+if (!window.PageExtractor) window.PageExtractor = {};
+if (!window.PageExtractor.ControlPanel) window.PageExtractor.ControlPanel = { super: PageExtractor, root: window.PageExtractor };
 
-PageExtractor.ControlPanel.Draggable = function (element) {
+window.PageExtractor.ControlPanel.Draggable = function (element) {
     var that = this;
     this.element = element;
     this.init = function() {
@@ -48,7 +48,7 @@ PageExtractor.ControlPanel.Draggable = function (element) {
     this.init();
 }
 
-PageExtractor.ControlPanel.initControlPanel = function (controlPanel) {
+window.PageExtractor.ControlPanel.initControlPanel = function (controlPanel) {
     new this.Draggable(controlPanel);
     document.getElementById("PageExtractorLaunchLearning").addEventListener("click", this.root.Ui.Manip.learn, false);
     document.getElementById("PageExtractorClearResults").addEventListener("click", this.root.Ui.Manip.clearResults, false);

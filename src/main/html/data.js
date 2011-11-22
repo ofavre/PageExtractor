@@ -5,16 +5,16 @@
  * See LICENSE file.
  */
 
-if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Html) PageExtractor.Html = { super: PageExtractor, root: PageExtractor };
-if (!PageExtractor.Html.Data) PageExtractor.Html.Data = { super: PageExtractor.Html, root: PageExtractor };
+if (!window.PageExtractor) window.PageExtractor = {};
+if (!window.PageExtractor.Html) window.PageExtractor.Html = { super: PageExtractor, root: window.PageExtractor };
+if (!window.PageExtractor.Html.Data) window.PageExtractor.Html.Data = { super: window.PageExtractor.Html, root: window.PageExtractor };
 
 // Inspired by jQuery.data()
-PageExtractor.Html.Data.dataCache = {};
-PageExtractor.Html.Data.next_uuid = 0;
-PageExtractor.Html.Data.recyclable_uuids = [];
+window.PageExtractor.Html.Data.dataCache = {};
+window.PageExtractor.Html.Data.next_uuid = 0;
+window.PageExtractor.Html.Data.recyclable_uuids = [];
 
-PageExtractor.Html.Data.getDataFrom = function (node) {
+window.PageExtractor.Html.Data.getDataFrom = function (node) {
     if (!node) return undefined;
     var uuid;
     if (!node.hasAttribute("data-PageExtractor-uuid")) {
@@ -33,7 +33,7 @@ PageExtractor.Html.Data.getDataFrom = function (node) {
     return rtn;
 }
 
-PageExtractor.Html.Data.hasDataFrom = function (node) {
+window.PageExtractor.Html.Data.hasDataFrom = function (node) {
     if (!node || !node.hasAttribute("data-PageExtractor-uuid")) return false;
     var uuid = parseInt(node.getAttribute("data-PageExtractor-uuid"));
     if (!this.dataCache[uuid]) {
@@ -45,7 +45,7 @@ PageExtractor.Html.Data.hasDataFrom = function (node) {
     return true;
 }
 
-PageExtractor.Html.Data.removeDataFrom = function (node) {
+window.PageExtractor.Html.Data.removeDataFrom = function (node) {
     if (!node || !node.hasAttribute("data-PageExtractor-uuid")) return;
     var uuid = parseInt(node.getAttribute("data-PageExtractor-uuid"));
     node.removeAttribute("data-PageExtractor-uuid");

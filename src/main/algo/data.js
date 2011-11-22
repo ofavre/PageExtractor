@@ -5,11 +5,11 @@
  * See LICENSE file.
  */
 
-if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Algo) PageExtractor.Algo = { super: PageExtractor, root: PageExtractor };
-if (!PageExtractor.Algo.Data) PageExtractor.Algo.Data = { super: PageExtractor.Algo, root: PageExtractor };
+if (!window.PageExtractor) window.PageExtractor = {};
+if (!window.PageExtractor.Algo) window.PageExtractor.Algo = { super: PageExtractor, root: window.PageExtractor };
+if (!window.PageExtractor.Algo.Data) window.PageExtractor.Algo.Data = { super: window.PageExtractor.Algo, root: window.PageExtractor };
 
-PageExtractor.Algo.Data.makeExample = function (target, isPositive) {
+window.PageExtractor.Algo.Data.makeExample = function (target, isPositive) {
     var rtn = {
         element: target,
         positive: isPositive,

@@ -5,15 +5,15 @@
  * See LICENSE file.
  */
 
-if (!PageExtractor) PageExtractor = {};
-if (!PageExtractor.Ui) PageExtractor.Ui = { super: PageExtractor, root: PageExtractor };
-if (!PageExtractor.Ui.Arff) PageExtractor.Ui.Arff = { super: PageExtractor.Ui, root: PageExtractor };
+if (!window.PageExtractor) window.PageExtractor = {};
+if (!window.PageExtractor.Ui) window.PageExtractor.Ui = { super: PageExtractor, root: window.PageExtractor };
+if (!window.PageExtractor.Ui.Arff) window.PageExtractor.Ui.Arff = { super: window.PageExtractor.Ui, root: window.PageExtractor };
 
-PageExtractor.Ui.Arff.setDataExport = function (content) {
+window.PageExtractor.Ui.Arff.setDataExport = function (content) {
     document.getElementById("PageExtractorDataExportContainer").style.display = "block"; // default value of a div
     document.getElementById("PageExtractorDataExport").value = content;
 }
 
-PageExtractor.Ui.Arff.hideDataExport = function () {
+window.PageExtractor.Ui.Arff.hideDataExport = function () {
     document.getElementById("PageExtractorDataExportContainer").style.display = "none";
 }
