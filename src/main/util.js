@@ -17,5 +17,3 @@ window.PageExtractor.Util.delegate = function (that, func) {
         return func.apply(that, arguments);
     };
 };
-
-console.log("Inside util.js", window.PageExtractor);
