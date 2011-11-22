@@ -18,8 +18,8 @@ window.PageExtractor.Html.Data.getDataFrom = function (node) {
     if (!node) return undefined;
     var uuid;
     if (!node.hasAttribute("data-PageExtractor-uuid")) {
-        if (recyclable_uuids.length > 0)
-            uuid = recyclable_uuids.shift();
+        if (this.recyclable_uuids.length > 0)
+            uuid = this.recyclable_uuids.shift();
         else
             uuid = ++this.next_uuid;
         node.setAttribute("data-PageExtractor-uuid", uuid);
@@ -39,7 +39,7 @@ window.PageExtractor.Html.Data.hasDataFrom = function (node) {
     if (!this.dataCache[uuid]) {
         // Shouldn't happen, fix this
         node.removeAttribute("data-PageExtractor-uuid");
-        recyclable_uuids.push(uuid);
+        this.recyclable_uuids.push(uuid);
         return false;
     }
     return true;
@@ -50,5 +50,5 @@ window.PageExtractor.Html.Data.removeDataFrom = function (node) {
     var uuid = parseInt(node.getAttribute("data-PageExtractor-uuid"));
     node.removeAttribute("data-PageExtractor-uuid");
     delete this.dataCache[uuid];
-    recyclable_uuids.push(uuid);
+    this.recyclable_uuids.push(uuid);
 }

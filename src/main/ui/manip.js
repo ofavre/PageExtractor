@@ -61,7 +61,7 @@ window.PageExtractor.Ui.Manip.addNewExampleAndHighlightIt = function (target, is
     } else {
         this.root.Algo.negatives.push(this.root.Algo.Data.makeExample(target, isPositive));
     }
-    exampleHighlights.push(this.highlightElement(target, isPositive ? "positive" : "negative"));
+    this.exampleHighlights.push(this.highlightElement(target, isPositive ? "positive" : "negative"));
 }
 
 window.PageExtractor.Ui.Manip.highlightElement = function (target, type) {
@@ -157,7 +157,7 @@ window.PageExtractor.Ui.Manip.removeHighlight = function (highlight) {
     }
     var type = this.root.Html.Data.getDataFrom(highlight)["type"];
     delete this.root.Html.Data.getDataFrom(this.getExampleFromHighlight(highlight))["highlight"][type];
-    var froms = { positive: exampleHighlights, negative: exampleHighlights, result: highlights };
+    var froms = { positive: this.exampleHighlights, negative: this.exampleHighlights, result: this.highlights };
     var from = froms[type];
     var idx = from.indexOf(highlight);
     if (idx >= 0) from.splice(idx, 1);
@@ -166,9 +166,9 @@ window.PageExtractor.Ui.Manip.removeHighlight = function (highlight) {
 }
 window.PageExtractor.Ui.Manip.clearExamples = function () {
     for (i = 0 ; i < exampleHighlights.length ; i++) {
-        exampleHighlights[i].parentNode.removeChild(exampleHighlights[i]);
+        this.exampleHighlights[i].parentNode.removeChild(this.exampleHighlights[i]);
     }
-    exampleHighlights = [];
+    this.exampleHighlights = [];
     this.root.Algo.positives = [];
     this.root.Algo.negatives = [];
 }
@@ -177,16 +177,16 @@ window.PageExtractor.Ui.Manip.clearExamples = function () {
 window.PageExtractor.Ui.Manip.highlights = []
 
 window.PageExtractor.Ui.Manip.clearResults = function () {
-    for (i = 0 ; i < highlights.length ; i++) {
-        highlights[i].parentNode.removeChild(highlights[i]);
+    for (i = 0 ; i < this.highlights.length ; i++) {
+        this.highlights[i].parentNode.removeChild(this.highlights[i]);
     }
     this.root.Algo.results = [];
-    highlights = [];
+    this.highlights = [];
 }
 
 window.PageExtractor.Ui.Manip.highlightResults = function (results) {
     for (var i = 0 ; i < results.length ; i++)
-        highlights.push(this.highlightElement(results[i], "result"));
+        this.highlights.push(this.highlightElement(results[i], "result"));
 }
 
 
