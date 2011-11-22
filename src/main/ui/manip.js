@@ -57,9 +57,9 @@ window.PageExtractor.Ui.Manip.elementClicked = function (evt) {
 window.PageExtractor.Ui.Manip.addNewExampleAndHighlightIt = function (target, isPositive) {
     if (!target) return;
     if (isPositive) {
-        positives.push(this.root.Algo.Data.makeExample(target, isPositive));
+        this.root.Algo.positives.push(this.root.Algo.Data.makeExample(target, isPositive));
     } else {
-        negatives.push(this.root.Algo.Data.makeExample(target, isPositive));
+        this.root.Algo.negatives.push(this.root.Algo.Data.makeExample(target, isPositive));
     }
     exampleHighlights.push(this.highlightElement(target, isPositive ? "positive" : "negative"));
 }
@@ -132,7 +132,7 @@ window.PageExtractor.Ui.Manip.removeExample = function (target, fromTypes) {
             this.removeExample(target[i], fromTypes);
         return;
     }
-    var froms = { positive: positives, negative: negatives, result: results };
+    var froms = { positive: this.root.Algo.positives, negative: this.root.Algo.negatives, result: this.root.Algo.results };
     var types = this.root.Html.Attrs.attributeValuesGet(target, "data-PageExtractor-types");
     for (var t = 0 ; t < types.length ; t++) {
         if (fromTypes.indexOf(types[t]) < 0) continue;
@@ -169,8 +169,8 @@ window.PageExtractor.Ui.Manip.clearExamples = function () {
         exampleHighlights[i].parentNode.removeChild(exampleHighlights[i]);
     }
     exampleHighlights = [];
-    positives = [];
-    negatives = [];
+    this.root.Algo.positives = [];
+    this.root.Algo.negatives = [];
 }
 
 
@@ -180,7 +180,7 @@ window.PageExtractor.Ui.Manip.clearResults = function () {
     for (i = 0 ; i < highlights.length ; i++) {
         highlights[i].parentNode.removeChild(highlights[i]);
     }
-    results = [];
+    this.root.Algo.results = [];
     highlights = [];
 }
 

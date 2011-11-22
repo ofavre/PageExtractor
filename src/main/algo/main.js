@@ -13,12 +13,12 @@ window.PageExtractor.Algo.negatives = [];
 window.PageExtractor.Algo.results = [];
 
 window.PageExtractor.Algo.learn = function () {
-    //var tmprslt = testRule('/html/body//'+positives[0].data[positives[0].data.length-1].tag+'[contains(concat(" ",@class," "),"'+positives[0].data[positives[0].data.length-1].classes[0]+'")]');
-    var tmprslt = this.Stats.statElements(this.XPath.getResults('/html/body//'+positives[0].data[positives[0].data.length-1].tag));
+    //var tmprslt = testRule('/html/body//'+this.positives[0].data[this.positives[0].data.length-1].tag+'[contains(concat(" ",@class," "),"'+this.positives[0].data[this.positives[0].data.length-1].classes[0]+'")]');
+    var tmprslt = this.Stats.statElements(this.XPath.getResults('/html/body//'+this.positives[0].data[this.positives[0].data.length-1].tag));
     console.log(tmprslt);
     for (var i = 0 ; i < tmprslt.length ; i++)
         if (tmprslt.stats.similarity.positives_as_ref.by_elmt.max[i] > tmprslt.stats.similarity.negatives_as_ref.by_elmt.max[i])
-            results.push(tmprslt.elements[i]);
+            this.results.push(tmprslt.elements[i]);
 
     /*
      * Try using classes and hierarchy first.
