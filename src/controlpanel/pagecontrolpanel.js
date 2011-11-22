@@ -50,8 +50,8 @@ window.PageExtractor.ControlPanel.Draggable = function (element) {
 
 window.PageExtractor.ControlPanel.initControlPanel = function (controlPanel) {
     new this.Draggable(controlPanel);
-    document.getElementById("PageExtractorLaunchLearning").addEventListener("click", this.root.Ui.Manip.learn, false);
-    document.getElementById("PageExtractorClearResults").addEventListener("click", this.root.Ui.Manip.clearResults, false);
-    document.getElementById("PageExtractorClose").addEventListener("click", this.root.Setup.PageExtractorTearDown, false);
-    document.getElementById("PageExtractorDataExportHide").addEventListener("click", this.root.Ui.Arff.hideDataExport, false);
+    document.getElementById("PageExtractorLaunchLearning").addEventListener("click", this.root.Util.delegate(this.root.Ui.Manip, 'learn'), false);
+    document.getElementById("PageExtractorClearResults").addEventListener("click", this.root.Util.delegate(this.root.Ui.Manip, 'clearResults'), false);
+    document.getElementById("PageExtractorClose").addEventListener("click", this.root.Util.delegate(this.root.Setup, 'tearDown'), false);
+    document.getElementById("PageExtractorDataExportHide").addEventListener("click", this.root.Util.delegate(this.root.Ui.Arff, 'hideDataExport'), false);
 }

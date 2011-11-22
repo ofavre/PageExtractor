@@ -53,7 +53,7 @@ window.PageExtractor.Setup.setup = function () {
         return;
     }
     this.installCss();
-    this.UiManip_elementClicked_closureEventHandler = this.root.Util.delegate(this.root.Ui.Manip, this.root.Ui.Manip.elementClicked);
+    this.UiManip_elementClicked_closureEventHandler = this.root.Util.delegate(this.root.Ui.Manip, 'elementClicked');
     document.addEventListener("click", this.UiManip_elementClicked_closureEventHandler, true);
     this.installControlPanel();
 }
