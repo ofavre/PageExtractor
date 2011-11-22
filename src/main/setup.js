@@ -36,7 +36,7 @@ window.PageExtractor.Setup.installControlPanel = function () {
         d.className = "PageExtractorControlPanel";
         d.innerHTML = response; //WARN: if using outerHTML, call d=document.getElementById("PageExtractorControlPanel"); right after!
         document.body.appendChild(d);
-        that.initControlPanel(d);
+        that.root.ControlPanel.initControlPanel(d);
     });
 }
 
@@ -53,7 +53,8 @@ window.PageExtractor.Setup.setup = function () {
         return;
     }
     this.installCss();
-    document.addEventListener("click", this.root.Ui.Manip.elementClicked, true);
+    this.UiManip_elementClicked_closureEventHandler = this.root.Util.delegate(this.root.Ui.Manip, this.root.Ui.Manip.elementClicked);
+    document.addEventListener("click", this.UiManip_elementClicked_closureEventHandler, true);
     this.installControlPanel();
 }
 
@@ -61,12 +62,12 @@ window.PageExtractor.Setup.tearDown = function () {
     if (!document.getElementById("PageExtractorControlPanel"))
         return;
     this.removeCss();
-    document.removeEventListener("click", this.root.Ui.Manip.elementClicked, true);
+    document.removeEventListener("click", this.UiManip_elementClicked_closureEventHandler, true);
+    delete this.UiManip_elementClicked_closureEventHandler;
     this.removeControlPanel();
     this.root.Ui.Manip.clearExamples();
     this.root.Ui.Manip.clearResults();
 }
 
-/***
- * window.PageExtractor.Setup.setup() is to be called once every module is loaded.
- ***/
+// Assume every module are loaded
+window.PageExtractor.Setup.setup();
