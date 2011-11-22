@@ -29,13 +29,14 @@ PageExtractor.Setup.removeCss = function () {
 }
 
 PageExtractor.Setup.installControlPanel = function () {
+    var that = this;
     chrome.extension.sendRequest({action: "fetchExtensionFile", file: "src/controlpanel/pagecontrolpanel.html"}, function(response) {
         var d = document.createElement('div');
         d.id = "PageExtractorControlPanel";
         d.className = "PageExtractorControlPanel";
         d.innerHTML = response; //WARN: if using outerHTML, call d=document.getElementById("PageExtractorControlPanel"); right after!
         document.body.appendChild(d);
-        initControlPanel(d);
+        that.initControlPanel(d);
     });
 }
 
@@ -51,19 +52,19 @@ PageExtractor.Setup.setup = function () {
         console.log("PageExtractor control panel already existing");
         return;
     }
-    installCss();
-    document.addEventListener("click", elementClicked, true);
-    installControlPanel();
+    this.installCss();
+    document.addEventListener("click", this.root.Ui.Manip.elementClicked, true);
+    this.installControlPanel();
 }
 
 PageExtractor.Setup.tearDown = function () {
     if (!document.getElementById("PageExtractorControlPanel"))
         return;
-    removeCss();
-    document.removeEventListener("click", elementClicked, true);
-    removeControlPanel();
-    clearExamples();
-    clearResults();
+    this.removeCss();
+    document.removeEventListener("click", this.root.Ui.Manip.elementClicked, true);
+    this.removeControlPanel();
+    this.root.Ui.Manip.clearExamples();
+    this.root.Ui.Manip.clearResults();
 }
 
 /***

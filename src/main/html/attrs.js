@@ -12,7 +12,7 @@ if (!PageExtractor.Html.Attrs) PageExtractor.Html.Attrs = { super: PageExtractor
 PageExtractor.Html.Attrs.attributeValuesHas = function (target, attribute, values, all) {
     if (!(values instanceof Array))
         return (" "+target.getAttribute(attribute)+" ").indexOf(" "+values+" ") >= 0;
-    var vls = attributeValuesGet(target, attribute);
+    var vls = this.attributeValuesGet(target, attribute);
     if (all && values.length < vls.length) return false;
     values.sort();
     vls.sort();
@@ -45,20 +45,20 @@ PageExtractor.Html.Attrs.attributeValuesSet = function (target, attribute, value
 
 PageExtractor.Html.Attrs.attributeValuesAdd = function (target, attribute, values) {
     if (!(values instanceof Array)) values = [values];
-    var elmt_values = attributeValuesGet(target, attribute);
+    var elmt_values = this.attributeValuesGet(target, attribute);
     for (var i = 0 ; i < values.length ; i++)
         if (elmt_values.indexOf(values[i]) < 0)
             elmt_values.push(values[i]);
-        attributeValuesSet(target, attribute, elmt_values);
+        this.attributeValuesSet(target, attribute, elmt_values);
 }
 
 PageExtractor.Html.Attrs.attributeValuesRemove = function (target, attribute, values) {
     if (!(values instanceof Array)) values = [values];
-    var elmt_values = attributeValuesGet(target, attribute);
+    var elmt_values = this.attributeValuesGet(target, attribute);
     for (var i = 0 ; i < values.length ; i++) {
         var idx = elmt_values.indexOf(values[i]);
         if (idx >= 0)
             elmt_values.splice(idx, 1);
     }
-    attributeValuesSet(target, attribute, elmt_values);
+    this.attributeValuesSet(target, attribute, elmt_values);
 }

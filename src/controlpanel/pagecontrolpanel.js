@@ -5,7 +5,10 @@
  * See LICENSE file.
  */
 
-function Draggable(element) {
+if (!PageExtractor) PageExtractor = {};
+if (!PageExtractor.ControlPanel) PageExtractor.ControlPanel = { super: PageExtractor, root: PageExtractor };
+
+PageExtractor.ControlPanel.Draggable = function (element) {
     var that = this;
     this.element = element;
     this.init = function() {
@@ -45,10 +48,10 @@ function Draggable(element) {
     this.init();
 }
 
-function initControlPanel(controlPanel) {
-    new Draggable(controlPanel);
-    document.getElementById("PageExtractorLaunchLearning").addEventListener("click", learn, false);
-    document.getElementById("PageExtractorClearResults").addEventListener("click", clearResults, false);
-    document.getElementById("PageExtractorClose").addEventListener("click", PageExtractorTearDown, false);
-    document.getElementById("PageExtractorDataExportHide").addEventListener("click", hideDataExport, false);
+PageExtractor.ControlPanel.initControlPanel = function (controlPanel) {
+    new this.Draggable(controlPanel);
+    document.getElementById("PageExtractorLaunchLearning").addEventListener("click", this.root.Ui.Manip.learn, false);
+    document.getElementById("PageExtractorClearResults").addEventListener("click", this.root.Ui.Manip.clearResults, false);
+    document.getElementById("PageExtractorClose").addEventListener("click", this.root.Setup.PageExtractorTearDown, false);
+    document.getElementById("PageExtractorDataExportHide").addEventListener("click", this.root.Ui.Arff.hideDataExport, false);
 }

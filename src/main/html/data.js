@@ -16,26 +16,27 @@ PageExtractor.Html.Data.recyclable_uuids = [];
 
 PageExtractor.Html.Data.getDataFrom = function (node) {
     if (!node) return undefined;
+    var uuid;
     if (!node.hasAttribute("data-PageExtractor-uuid")) {
         if (recyclable_uuids.length > 0)
             uuid = recyclable_uuids.shift();
         else
-            uuid = ++next_uuid;
+            uuid = ++this.next_uuid;
         node.setAttribute("data-PageExtractor-uuid", uuid);
     } else {
         uuid = parseInt(node.getAttribute("data-PageExtractor-uuid"));
     }
-    var rtn = dataCache[uuid];
+    var rtn = this.dataCache[uuid];
     if (rtn == undefined) {
-        rtn = dataCache[uuid] = {};
+        rtn = this.dataCache[uuid] = {};
     }
     return rtn;
 }
 
 PageExtractor.Html.Data.hasDataFrom = function (node) {
     if (!node || !node.hasAttribute("data-PageExtractor-uuid")) return false;
-    uuid = parseInt(node.getAttribute("data-PageExtractor-uuid"));
-    if (!dataCache[uuid]) {
+    var uuid = parseInt(node.getAttribute("data-PageExtractor-uuid"));
+    if (!this.dataCache[uuid]) {
         // Shouldn't happen, fix this
         node.removeAttribute("data-PageExtractor-uuid");
         recyclable_uuids.push(uuid);
@@ -46,8 +47,8 @@ PageExtractor.Html.Data.hasDataFrom = function (node) {
 
 PageExtractor.Html.Data.removeDataFrom = function (node) {
     if (!node || !node.hasAttribute("data-PageExtractor-uuid")) return;
-    uuid = parseInt(node.getAttribute("data-PageExtractor-uuid"));
+    var uuid = parseInt(node.getAttribute("data-PageExtractor-uuid"));
     node.removeAttribute("data-PageExtractor-uuid");
-    delete dataCache[uuid];
+    delete this.dataCache[uuid];
     recyclable_uuids.push(uuid);
 }
