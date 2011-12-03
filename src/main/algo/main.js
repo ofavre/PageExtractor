@@ -37,47 +37,6 @@ window.PageExtractor.Algo.learn = function () {
      *  - (Prefer: higher similarity with positives, lower similarity with negatives, fewer classes)
      *  - (What now?)
      */
-    var index = {};
-    var data = [];
-    var Criteria = function(classes, depth, depth_is_reversed) {
-        if (classes instanceof Array) {
-            if (classes.length == 0)
-                return undefined;
-        } else {
-            if (classes == undefined || classes == null)
-                return undefined;
-            classes = [classes];
-        }
-        this.classes = classes;
-        this.depth = depth;
-        this.depth_is_reversed = depth_is_reversed ? true : false;
-        this.key = function(){
-            return this.classes.length+"["+this.classes.join(",")+"]"+(this.depth_is_reversed?"R":"N")+this.depth;
-        };
-        var idx = index[this.key()];
-        if (idx != undefined)
-            return data[idx];
-        // Continue here with the new object if not already in index
-        this.id = data.length;
-        index[this.key()] = data.length;
-        data.push(this);
-        this.remove = function() {
-            var key = this.key()
-            var idx = index[key];
-            if (idx == undefined) return;
-            delete index[key];
-            data[idx] = undefined; // don't splice, or it'll shift all other indexes!
-        };
-        this.element_indexes = [];
-        this.mean_max_similarity_with_positives = 0.0;
-        this.mean_max_similarity_with_negatives = 0.0;
-        this.updateWithNewElement = function(rslt, elmt_idx) {
-            this.mean_max_similarity_with_positives = (this.mean_max_similarity_with_positives * this.element_indexes.length + rslt.stats.similarity.positives_as_ref.by_elmt.max[elmt_idx]) / (this.element_indexes.length + 1.0);
-            this.mean_max_similarity_with_negatives = (this.mean_max_similarity_with_negatives * this.element_indexes.length + rslt.stats.similarity.negatives_as_ref.by_elmt.max[elmt_idx]) / (this.element_indexes.length + 1.0);
-            this.element_indexes.push(elmt_idx);
-        };
-        return this;
-    };
     var result_comparator = function(rslt) {
         var tmp = rslt.stats.similarity.positives_as_ref.by_elmt.max;
         return function(i,j) {
@@ -112,43 +71,23 @@ window.PageExtractor.Algo.learn = function () {
         }
         return rtn;
     };
+    var criteriaSearchCtx = new this.CriteriaCandidateContext();
     for (var i = 0 ; i < tmprslt.length ; i++) {
         var rslt = tmprslt.data[sortedIdx[i]];
         for (var d = rslt.data.length-1 ; d >= 0 ; d--) {
             var elmt = rslt.data[d];
             var cls = combinations(elmt.classes);
             for (var j = 0 ; j < cls.length ; j++) {
-                var c = new Criteria(cls[j], elmt.depth, false);
+                var c = new criteriaSearchCtx.Criteria(cls[j], elmt.depth, false);
                 if (c != undefined)
                     c.updateWithNewElement(tmprslt, sortedIdx[i]);
-                c = new Criteria(cls[j], elmt.depth_reversed, true);
+                c = new criteriaSearchCtx.Criteria(cls[j], elmt.depth_reversed, true);
                 if (c != undefined)
                     c.updateWithNewElement(tmprslt, sortedIdx[i]);
             }
         }
     }
-    var data_sortedIdx = [];
-    for (var i = 0 ; i < data.length ; i++)
-        data_sortedIdx.push(i);
-    data_sortedIdx.sort(function(i,j){
-        var v;
-        v = data[j].mean_max_similarity_with_positives - data[i].mean_max_similarity_with_positives; // decreasing
-        if (v != 0) return v;
-        v = data[i].mean_max_similarity_with_negatives - data[j].mean_max_similarity_with_negatives; // increasing
-        if (v != 0) return v;
-        if (data[i].depth_is_reversed == true && data[j].depth_is_reversed == false) return 1;
-        if (data[i].depth_is_reversed == true)
-            v = data[j].depth - data[i].depth; // decreasing (farther up in hierarchy, from leaf)
-        else
-            v = data[i].depth - data[j].depth; // increasing (farther down in hierarchy, from root)
-        if (v != 0) return v;
-        v = data[i].classes.length - data[j].classes.length; // increasing
-        if (v != 0) return v;
-        v = data[i].classes.join(' ').localeCompare(data[j].classes.join(' ')); // increasing
-        if (v != 0) return v;
-        // Don't compare element_count at this stage, it's pointless as it only depends on the preceding
-        return 0;
-    });
+    var sortedCriteriaIdx = criteriaSearchCtx.getSortedIndexes();
     var arff = "@relation PageExtractor\n\n"+
         "@attribute depth real\n"+
         "@attribute depth_reversed {1,0}\n"+
@@ -159,8 +98,8 @@ window.PageExtractor.Algo.learn = function () {
         "\n@data\n";
     var instances = [];
     var best;
-    for (var i = 0 ; i < data_sortedIdx.length ; i++) {
-        var d = data[data_sortedIdx[i]];
+    for (var i = 0 ; i < sortedCriteriaIdx.length ; i++) {
+        var d = criteriaSearchCtx.get(sortedCriteriaIdx[i]);
         if (d.mean_max_similarity_with_positives > d.mean_max_similarity_with_negatives) {
             if (best == undefined) best = i;
             instances.push([
@@ -176,7 +115,94 @@ window.PageExtractor.Algo.learn = function () {
     arff += instances.join('\n');
     this.root.Ui.Arff.setDataExport(arff);
 
-    best = data[data_sortedIdx[best]];
+    best = criteriaSearchCtx.get(sortedCriteriaIdx[best]);
+    console.log(best);
     // TODO: Use the rule, check validity, recurse
     // TODO: Create a criteria class, that generates XPath queries
 }
+
+window.PageExtractor.Algo.CriteriaCandidateContext = function () {
+    var index = {}; // Criteria key to index (for the "data" array) lookup map
+    var data = []; // created Criteria
+    /** Returns an existing criteria by index */
+    this.get = function(index) {
+        return data[index];
+    };
+    /** Creates a new Criteria or returns an already existing one, based on the given arguments. */
+    this.Criteria = function(classes, depth, depth_is_reversed) {
+        // Uniformize classes
+        if (classes instanceof Array) {
+            if (classes.length == 0)
+                return undefined;
+        } else {
+            if (classes == undefined || classes == null)
+                return undefined;
+            classes = [classes];
+        }
+        this.classes = classes;
+        this.depth = depth;
+        this.depth_is_reversed = depth_is_reversed ? true : false;
+        // Deduplicate Criteria based on (classes, depth and depth_is_reversed)
+        // If the key already exists in the index, return that instance instead of this newly created instance.
+        this.key = function(){
+            return this.classes.length+"["+this.classes.join(",")+"]"+(this.depth_is_reversed?"R":"N")+this.depth;
+        };
+        var idx = index[this.key()];
+        if (idx != undefined)
+            return data[idx];
+        // Continue here with this newly created instance if not already in index
+        this.id = data.length;
+        index[this.key()] = data.length;
+        data.push(this);
+        this.remove = function() {
+            var key = this.key()
+            var idx = index[key];
+            if (idx == undefined) return;
+            delete index[key];
+            data[idx] = undefined; // don't splice, or it'll shift all other indexes!
+        };
+        this.element_indexes = [];
+        this.mean_max_similarity_with_positives = 0.0;
+        this.mean_max_similarity_with_negatives = 0.0;
+        this.updateWithNewElement = function(rslt, elmt_idx) {
+            this.mean_max_similarity_with_positives = (this.mean_max_similarity_with_positives * this.element_indexes.length + rslt.stats.similarity.positives_as_ref.by_elmt.max[elmt_idx]) / (this.element_indexes.length + 1.0);
+            this.mean_max_similarity_with_negatives = (this.mean_max_similarity_with_negatives * this.element_indexes.length + rslt.stats.similarity.negatives_as_ref.by_elmt.max[elmt_idx]) / (this.element_indexes.length + 1.0);
+            this.element_indexes.push(elmt_idx);
+        };
+        return this;
+    };
+    this.sortCb = function(a,b) {
+        var v;
+        v = b.mean_max_similarity_with_positives - a.mean_max_similarity_with_positives; // decreasing
+        if (v != 0) return v;
+        v = a.mean_max_similarity_with_negatives - b.mean_max_similarity_with_negatives; // increasing
+        if (v != 0) return v;
+        if (a.depth_is_reversed) {
+            if (!b.depth_is_reversed) return -1; // reversed depth before non reversed
+            v = b.depth - a.depth; // decreasing (farther up in hierarchy, from leaf)
+        } else {
+            if (b.depth_is_reversed) return 1; // non reversed depth after reversed
+            v = a.depth - b.depth; // increasing (farther down in hierarchy, from root)
+        }
+        if (v != 0) return v;
+        v = a.classes.length - b.classes.length; // increasing
+        if (v != 0) return v;
+        v = a.classes.join(' ').localeCompare(b.classes.join(' ')); // increasing
+        if (v != 0) return v;
+        // Don't compare element_count at this stage, it's pointless as it only depends on the preceding
+        return 0;
+    }
+    this.getSortedIndexes = function(sortCb) {
+        if (typeof(sortCb) != "function")
+            sortCb = this.sortCb;
+        boundSortCb = function(i,j) {
+            return sortCb(data[i], data[j])
+        };
+        var rtn = [];
+        for (var i = 0 ; i < data.length ; i++)
+            rtn.push(i);
+        rtn.sort(boundSortCb);
+        return rtn;
+    };
+    return this;
+};
