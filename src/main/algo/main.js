@@ -33,36 +33,12 @@ window.PageExtractor.Algo.learn = function () {
      *  - (Prefer: higher similarity with positives, lower similarity with negatives, fewer classes)
      *  - (What now?)
      */
-    var combinations = function(values) {
-        var presence = [];
-        for (var i = 0 ; i < values.length ; i++)
-            presence.push(false);
-        var rtn = [];
-        var i = 0;
-        // The following loop skips "all false", which is intentional
-        while (i < presence.length) {
-            if (presence[i]) {
-                presence[i] = false;
-                i++;
-                continue;
-            } else {
-                presence[i] = true;
-                i = 0;
-            }
-            var c = [];
-            for (var j = 0 ; j < presence.length ; j++)
-                if (presence[j])
-                    c.push(values[j]);
-            rtn.push(c);
-        }
-        return rtn;
-    };
     var criteriaSearchCtx = new this.CriteriaCandidateContext();
     for (var i = 0 ; i < tmprslt.length ; i++) {
         var rslt = tmprslt.data[i];
         for (var d = rslt.data.length-1 ; d >= 0 ; d--) {
             var elmt = rslt.data[d];
-            var cls = combinations(elmt.classes);
+            var cls = this.root.Util.combinations(elmt.classes, 1);
             for (var j = 0 ; j < cls.length ; j++) {
                 criteriaSearchCtx.getOrCreate(cls[j], elmt.depth         , false).updateWithNewElement(tmprslt, i);
                 criteriaSearchCtx.getOrCreate(cls[j], elmt.depth_reversed, true ).updateWithNewElement(tmprslt, i);
