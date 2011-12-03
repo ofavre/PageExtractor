@@ -29,16 +29,18 @@ window.PageExtractor.Algo.XPath.makeXPath = function (target) {
         else
             classes = undefined;
         var idx = this.getIndex(curr);
-        if (idx > 0)
-            if (classes)
+        if (idx > 0) {
+            if (classes) {
                 parts.push(curr.tagName.toLowerCase()+'[position()='+idx+' and '+classes+']');
-            else
+            } else {
                 parts.push(curr.tagName.toLowerCase()+'[position()='+idx+']');
-            else if (classes)
-                parts.push(curr.tagName.toLowerCase()+'['+classes+']');
-            else
-                parts.push(curr.tagName.toLowerCase());
-            curr = curr.parentNode;
+            }
+        } else if (classes) {
+            parts.push(curr.tagName.toLowerCase()+'['+classes+']');
+        } else {
+            parts.push(curr.tagName.toLowerCase());
+        }
+        curr = curr.parentNode;
     }
     parts.reverse();
     return '/html/body/'+parts.join('/');
