@@ -64,10 +64,8 @@ window.PageExtractor.Algo.learn = function () {
             var elmt = rslt.data[d];
             var cls = combinations(elmt.classes);
             for (var j = 0 ; j < cls.length ; j++) {
-                var c = new criteriaSearchCtx.Criteria(cls[j], elmt.depth, false);
-                c.updateWithNewElement(tmprslt, i);
-                c = new criteriaSearchCtx.Criteria(cls[j], elmt.depth_reversed, true);
-                c.updateWithNewElement(tmprslt, i);
+                criteriaSearchCtx.getOrCreate(cls[j], elmt.depth         , false).updateWithNewElement(tmprslt, i);
+                criteriaSearchCtx.getOrCreate(cls[j], elmt.depth_reversed, true ).updateWithNewElement(tmprslt, i);
             }
         }
     }
@@ -83,7 +81,7 @@ window.PageExtractor.Algo.learn = function () {
     var instances = [];
     var best;
     for (var i = 0 ; i < sortedCriteriaIdx.length ; i++) {
-        var d = criteriaSearchCtx.get(sortedCriteriaIdx[i]);
+        var d = criteriaSearchCtx.getByIndex(sortedCriteriaIdx[i]);
         if (d.mean_max_similarity_with_positives > d.mean_max_similarity_with_negatives) {
             if (best == undefined) best = i;
             instances.push([
@@ -99,8 +97,10 @@ window.PageExtractor.Algo.learn = function () {
     arff += instances.join('\n');
     this.root.Ui.Arff.setDataExport(arff);
 
-    best = criteriaSearchCtx.get(sortedCriteriaIdx[best]);
-    console.log(best);
+    if (best != undefined) {
+        best = criteriaSearchCtx.getByIndex(sortedCriteriaIdx[best]);
+        console.log(best);
+    }
     // TODO: Use the rule, check validity, recurse
     // TODO: Create a criteria class, that generates XPath queries
 }
@@ -109,35 +109,14 @@ window.PageExtractor.Algo.CriteriaCandidateContext = function () {
     var index = {}; // Criteria key to index (for the "data" array) lookup map
     var data = []; // created Criteria
     /** Returns an existing criteria by index */
-    this.get = function(index) {
+    this.getByIndex = function(index) {
         return data[index];
     };
     /** Creates a new Criteria or returns an already existing one, based on the given arguments. */
-    this.Criteria = function(classes, depth, depth_is_reversed) {
-        // Uniformize classes
-        if (classes instanceof Array) {
-            if (classes.length == 0)
-                return undefined;
-        } else {
-            if (classes == undefined || classes == null)
-                return undefined;
-            classes = [classes];
-        }
+    var Criteria = function(classes, depth, depth_is_reversed) {
         this.classes = classes;
         this.depth = depth;
         this.depth_is_reversed = depth_is_reversed ? true : false;
-        // Deduplicate Criteria based on (classes, depth and depth_is_reversed)
-        // If the key already exists in the index, return that instance instead of this newly created instance.
-        this.key = function(){
-            return this.classes.length+"["+this.classes.join(",")+"]"+(this.depth_is_reversed?"R":"N")+this.depth;
-        };
-        var idx = index[this.key()];
-        if (idx != undefined)
-            return data[idx];
-        // Continue here with this newly created instance if not already in index
-        this.id = data.length;
-        index[this.key()] = data.length;
-        data.push(this);
         this.element_indexes = [];
         this.mean_max_similarity_with_positives = 0.0;
         this.mean_max_similarity_with_negatives = 0.0;
@@ -147,6 +126,30 @@ window.PageExtractor.Algo.CriteriaCandidateContext = function () {
             this.element_indexes.push(elmt_idx);
         };
         return this;
+    };
+    this.getOrCreate = function(classes, depth, depth_is_reversed) {
+        // Uniformize classes
+        if (classes instanceof Array) {
+            if (classes.length == 0)
+                return undefined;
+        } else {
+            if (classes == undefined || classes == null)
+                return undefined;
+            classes = [classes];
+        }
+        // Deduplicate Criteria based on (classes, depth and depth_is_reversed)
+        // If the key already exists in the index, return that instance instead of this newly created instance.
+        var key = classes.length+"["+classes.join(",")+"]"+(depth_is_reversed?"R":"N")+depth;
+        var idx = index[key];
+        var rtn;
+        if (idx != undefined) {
+            rtn = data[idx];
+        } else {
+            rtn = new Criteria(classes, depth, depth_is_reversed);
+            index[key] = data.length;
+            data.push(rtn);
+        }
+        return rtn;
     };
     this.sortCb = function(a,b) {
         var v;
