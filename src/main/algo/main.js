@@ -65,11 +65,9 @@ window.PageExtractor.Algo.learn = function () {
             var cls = combinations(elmt.classes);
             for (var j = 0 ; j < cls.length ; j++) {
                 var c = new criteriaSearchCtx.Criteria(cls[j], elmt.depth, false);
-                if (c != undefined)
-                    c.updateWithNewElement(tmprslt, i);
+                c.updateWithNewElement(tmprslt, i);
                 c = new criteriaSearchCtx.Criteria(cls[j], elmt.depth_reversed, true);
-                if (c != undefined)
-                    c.updateWithNewElement(tmprslt, i);
+                c.updateWithNewElement(tmprslt, i);
             }
         }
     }
@@ -140,13 +138,6 @@ window.PageExtractor.Algo.CriteriaCandidateContext = function () {
         this.id = data.length;
         index[this.key()] = data.length;
         data.push(this);
-        this.remove = function() {
-            var key = this.key()
-            var idx = index[key];
-            if (idx == undefined) return;
-            delete index[key];
-            data[idx] = undefined; // don't splice, or it'll shift all other indexes!
-        };
         this.element_indexes = [];
         this.mean_max_similarity_with_positives = 0.0;
         this.mean_max_similarity_with_negatives = 0.0;
