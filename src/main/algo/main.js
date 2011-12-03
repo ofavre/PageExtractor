@@ -23,30 +23,16 @@ window.PageExtractor.Algo.learn = function () {
     /*
      * Try using classes and hierarchy first.
      *  - Search for anything (like '/html/body//TAG')
-     *  - Sort results by decreasing max similarity with positives
      *  - Find good classes/depth:
-     *     - Iterate results in order (decreasing)
+     *     - Iterate results
      *     - Consider hierarchy from leaf to root
      *     - Note unique classes/depth and n-uples/ and /depth_reversed: use as key
-     *     - (Thread not already known key as having a last met rank of 0)
-     *     - (¿If last key was met in more than X ranks ago, remove?)
-     *     - Else update last met rank, and keep
      *     - Add if not already available
      *     - Update element count and means max similarity with positives and negatives, for that key
      *  - Sort by mean max similarity with positives
      *  - (Prefer: higher similarity with positives, lower similarity with negatives, fewer classes)
      *  - (What now?)
      */
-    var result_comparator = function(rslt) {
-        var tmp = rslt.stats.similarity.positives_as_ref.by_elmt.max;
-        return function(i,j) {
-            return tmp[i] - tmp[j]; // decreasing
-        };
-    };
-    var sortedIdx = [];
-    for (var i = 0 ; i < tmprslt.length ; i++)
-        sortedIdx.push(i);
-    sortedIdx.sort(result_comparator(tmprslt));
     var combinations = function(values) {
         var presence = [];
         for (var i = 0 ; i < values.length ; i++)
@@ -73,17 +59,17 @@ window.PageExtractor.Algo.learn = function () {
     };
     var criteriaSearchCtx = new this.CriteriaCandidateContext();
     for (var i = 0 ; i < tmprslt.length ; i++) {
-        var rslt = tmprslt.data[sortedIdx[i]];
+        var rslt = tmprslt.data[i];
         for (var d = rslt.data.length-1 ; d >= 0 ; d--) {
             var elmt = rslt.data[d];
             var cls = combinations(elmt.classes);
             for (var j = 0 ; j < cls.length ; j++) {
                 var c = new criteriaSearchCtx.Criteria(cls[j], elmt.depth, false);
                 if (c != undefined)
-                    c.updateWithNewElement(tmprslt, sortedIdx[i]);
+                    c.updateWithNewElement(tmprslt, i);
                 c = new criteriaSearchCtx.Criteria(cls[j], elmt.depth_reversed, true);
                 if (c != undefined)
-                    c.updateWithNewElement(tmprslt, sortedIdx[i]);
+                    c.updateWithNewElement(tmprslt, i);
             }
         }
     }
