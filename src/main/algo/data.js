@@ -28,8 +28,8 @@ window.PageExtractor.Algo.Data.makeExample = function (target, isPositive) {
                 position: this.super.XPath.getIndex(curr),
                 position_reversed: this.super.XPath.getIndex(curr, true),
                 position_max: this.super.XPath.getSiblingsTagCount(curr),
-                children_count: curr.children.length,
-                text_len: curr.textContent.replace(/[\s\n]+/,' ').trim().length
+                children_count: curr.children.length
+                // XXX Deactivated: text_len: curr.textContent.replace(/[\s\n]+/,' ').trim().length
             };
         }
         rtn.data.push(datas.data);

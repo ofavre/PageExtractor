@@ -166,6 +166,6 @@ window.PageExtractor.Algo.Stats.exampleSameLevelSimilarity = function (exA, leve
     // Position_max, children_count and text_len normed log difference
     addToScore(1.5, this.logDiffNormed(A.position_max, B.position_max));
     addToScore(1.0, this.logDiffNormed(A.children_count, B.children_count));
-    addToScore(0.0, this.logDiffNormed(A.text_len, B.text_len)); // FIXME Find good weight (0.5 ?)
+    // XXX Deactivated: addToScore(0.0, this.logDiffNormed(A.text_len, B.text_len)); // FIXME Find good weight (0.5 ?)
     return weights == 0 ? 0.0 : rtn / weights;
 }
