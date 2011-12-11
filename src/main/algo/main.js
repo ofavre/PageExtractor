@@ -13,12 +13,24 @@ window.PageExtractor.Algo.negatives = [];
 window.PageExtractor.Algo.results = [];
 
 window.PageExtractor.Algo.learn = function () {
-    //var tmprslt = testRule('/html/body//'+this.positives[0].data[this.positives[0].data.length-1].tag+'[contains(concat(" ",@class," "),"'+this.positives[0].data[this.positives[0].data.length-1].classes[0]+'")]');
-    var tmprslt = this.Stats.statElements(this.XPath.getResults('/html/body//'+this.positives[0].data[this.positives[0].data.length-1].tag));
-    console.log(tmprslt);
-    for (var i = 0 ; i < tmprslt.length ; i++)
-        if (tmprslt.stats.similarity.positives_as_ref.by_elmt.max[i] > tmprslt.stats.similarity.negatives_as_ref.by_elmt.max[i])
-            this.results.push(tmprslt.elements[i]);
+    var collectingQuery = new this.XPath.Query();
+    var tagDone = {};
+    for (var i = 0 ; i < this.positives.length ; i++) {
+        var positive = this.positives[i];
+        var tag = positive.data[positive.data.length-1].tag;
+        if (tagDone[tag] == undefined) {
+            var q = new this.XPath.Query();
+            q.setUseReversedDepth(true);
+            q.addCriterion(undefined, -1, tag, [], undefined);
+            collectingQuery.addOr(q);
+            tagDone[tag] = q;
+        }
+    }
+    var collectingResults = this.Stats.statElements(this.XPath.getResults(collectingQuery.toXPath()));
+    console.log(collectingResults);
+    for (var i = 0 ; i < collectingResults.length ; i++)
+        if (collectingResults.stats.similarity.positives_as_ref.by_elmt.max[i] > collectingResults.stats.similarity.negatives_as_ref.by_elmt.max[i])
+            this.results.push(collectingResults.elements[i]);
 
     /*
      * Try using classes and hierarchy first.
@@ -34,14 +46,14 @@ window.PageExtractor.Algo.learn = function () {
      *  - (What now?)
      */
     var criteriaSearchCtx = new this.CriteriaCandidateContext();
-    for (var i = 0 ; i < tmprslt.length ; i++) {
-        var rslt = tmprslt.data[i];
+    for (var i = 0 ; i < collectingResults.length ; i++) {
+        var rslt = collectingResults.data[i];
         for (var d = rslt.data.length-1 ; d >= 0 ; d--) {
             var elmt = rslt.data[d];
             var cls = this.root.Util.combinations(elmt.classes, 1);
             for (var j = 0 ; j < cls.length ; j++) {
-                criteriaSearchCtx.getOrCreate(cls[j], elmt.depth         , false).updateWithNewElement(tmprslt, i);
-                criteriaSearchCtx.getOrCreate(cls[j], elmt.depth_reversed, true ).updateWithNewElement(tmprslt, i);
+                criteriaSearchCtx.getOrCreate(cls[j], elmt.depth         , false).updateWithNewElement(collectingResults, i);
+                criteriaSearchCtx.getOrCreate(cls[j], elmt.depth_reversed, true ).updateWithNewElement(collectingResults, i);
             }
         }
     }
@@ -78,7 +90,6 @@ window.PageExtractor.Algo.learn = function () {
         console.log(best);
     }
     // TODO: Use the rule, check validity, recurse
-    // TODO: Create a criteria class, that generates XPath queries
 }
 
 window.PageExtractor.Algo.CriteriaCandidateContext = function () {
