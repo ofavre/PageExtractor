@@ -55,6 +55,8 @@ window.PageExtractor.Algo.XPath.Query = function() {
         // }
     };
     this.addCriterion = function(depth, depth_reversed, tag, classes, position) {
+        if (classes == undefined)
+            classes = [];
         if (depth != undefined)
             criteriaByDepth[depth] = {
                 depth: depth,
@@ -114,27 +116,31 @@ window.PageExtractor.Algo.XPath.Query = function() {
             parts[crit.depth] = part;
         }
         parts.shift(); // remove the placeholder for the following process
-        for (var i = 0 ; i < parts.length ; i++)
-            if (parts[i] == undefined)
-                parts[i] = "*";
-        if (parts.length > 0 && useReversedDepth)
-            parts.reverse();
-        if (useReversedDepth)
-            prefix += "/";
-        parts.unshift(prefix);
-        // Get the nth ancestor of the target element
-        for (var i = Math.abs(ancestryLevel) ; i > 0 ; i--) {
-            if (parts[parts.length-1] == "*")
-                parts.splice(parts.length-1,1);
-            else
-                parts.push("..");
+        if (parts.length > 0) {
+            for (var i = 0 ; i < parts.length ; i++)
+                if (parts[i] == undefined)
+                    parts[i] = "*";
+            if (parts.length > 0 && useReversedDepth)
+                parts.reverse();
+            if (useReversedDepth)
+                prefix += "/";
+            parts.unshift(prefix);
+            // Get the nth ancestor of the target element
+            for (var i = Math.abs(ancestryLevel) ; i > 0 ; i--) {
+                if (parts[parts.length-1] == "*")
+                    parts.splice(parts.length-1,1);
+                else
+                    parts.push("..");
+            }
+            if (ancestryLevel == 0)
+                parts.push(".");
         }
-        if (ancestryLevel == 0)
-            parts.push(".");
         var rtn = parts.join("/");
         // ORing with other parts and returning
         if (orQueries.length > 0) {
-            var ors = [rtn];
+            var ors = [];
+            if (rtn != "")
+                ors.push(rtn);
             for (var i = 0 ; i < orQueries.length ; i++) {
                 var sub = orQueries[i].toXPath();
                 if (sub.length != 0)
