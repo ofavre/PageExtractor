@@ -36,50 +36,39 @@ window.PageExtractor.Algo.XPath.Query = function() {
         useReversedDepth = value ? true : false;
         return this;
     };
-    var criteria = [
+    var criteriaByDepth = {
+        // depth: criteria index
         // {
         //   depth: a positive (from root) number,
-        //   depth_reversed: a negative (from target) number,
         //   tag: "SOMETAG" or undefined/"*",
         //   classes: [array of class, or empty],
         //   position: a positive (from first()) or negative (from last()) number or undefined
         // }
-    ];
-    var criteriaByDepth = {
-        // depth: criteria index
     };
     var criteriaByReversedDepth = {
-        // reversed depth: criteria index
+        // (absolute value of) reversed depth: criteria index
+        // {
+        //   depth: the absolute value of a negative (from target) number,
+        //   tag: "SOMETAG" or undefined/"*",
+        //   classes: [array of class, or empty],
+        //   position: a positive (from first()) or negative (from last()) number or undefined
+        // }
     };
     this.addCriterion = function(depth, depth_reversed, tag, classes, position) {
-        // New criterion
-        var newCriterion = {
-            depth: depth,
-            depth_reversed: depth_reversed,
-            tag: tag,
-            classes: classes,
-            position: position
-        };
-        // Look for depth to be already known
-        var id = criteriaByDepth[depth];
-        if (id == undefined) {
-            // Create one new id
-            // Index it
-            criteriaByDepth[depth] = criteria.length;
-            // Add the criterion
-            criteria.push(newCriterion);
-        } else
-            criteria[id] = newCriterion;
-        // Look for depth_reversed to be already known
-        id = criteriaByReversedDepth[depth_reversed];
-        if (id == undefined) {
-            // Create one new id
-            // Index it
-            criteriaByReversedDepth[depth_reversed] = criteria.length;
-            // Add the criterion
-            criteria.push(newCriterion);
-        } else
-            criteria[id] = newCriterion;
+        if (depth != undefined)
+            criteriaByDepth[depth] = {
+                depth: depth,
+                tag: tag,
+                classes: classes,
+                position: position
+            };
+        if (depth_reversed != undefined)
+            criteriaByReversedDepth[Math.abs(depth_reversed)] = {
+                depth: Math.abs(depth_reversed),
+                tag: tag,
+                classes: classes,
+                position: position
+            };
     };
     var ancestryLevel = 0; // How many time to go back up from the target XPath element to reach the actual desired element
     this.setAncestryLevel = function(value) {
@@ -90,54 +79,49 @@ window.PageExtractor.Algo.XPath.Query = function() {
     };
     this.toXPath = function() {
         var prefix = "/html/body";
-        var parts = [];
-        if (criteria.length > 0) {
-            /*
-             * Generate string for each depth
-             *   constrained?
-             *     generate the constrain
-             *   unconstrained
-             *     "*"
-             * Join with "/"
-             * Padding:
-             *   !reversed
-             *     prepend N times "*"
-             *   reversed?
-             *     append N times "*"
-             * Bootstrap:
-             *   reversed?
-             *     prepend "/" (an additional / to get '//')
-             */
-            var set = useReversedDepth ? criteriaByReversedDepth : criteriaByDepth;
-            for (var key in set) {
-                var crit = criteria[set[key]];
-                var depth = useReversedDepth ? Math.abs(crit.depth_reversed) : crit.depth;
-                var preconditions = [];
-                if (crit.position != undefined) {
-                    if (crit.position >= 0)
-                        preconditions.push("position()="+crit.position);
-                    else
-                        preconditions.push("position()=last()-"+Math.abs(crit.position));
-                }
-                if (crit.classes.length > 0)
-                    preconditions.push('contains(concat(" ",@class," ")," ' + crit.classes.join(' ") and contains(concat(" ",@class," ")," ') + ' ")');
-                var part = crit.tag == undefined ? "*" : crit.tag;
-                if (preconditions.length > 0)
-                    part += "["+preconditions.join(" and ")+"]";
-                parts[depth] = part;
+        var parts = ["(prefix placeholder)"];
+        /*
+         * Generate string for each depth
+         *   constrained?
+         *     generate the constrain
+         *   unconstrained
+         *     "*"
+         * Join with "/"
+         * Padding:
+         *   !reversed
+         *     prepend N times "*"
+         *   reversed?
+         *     append N times "*"
+         * Bootstrap:
+         *   reversed?
+         *     prepend "/" (an additional / to get '//')
+         */
+        var set = useReversedDepth ? criteriaByReversedDepth : criteriaByDepth;
+        for (var key in set) {
+            var crit = set[key];
+            var preconditions = [];
+            if (crit.position != undefined) {
+                if (crit.position >= 0)
+                    preconditions.push("position()="+crit.position);
+                else
+                    preconditions.push("position()=last()-"+Math.abs(crit.position));
             }
-            for (var i = 1 ; i < parts.length ; i++)
-                if (parts[i] == undefined)
-                    parts[i] = "*";
-            if (useReversedDepth) {
-                parts.reverse();
-                // Keep the first element at the first place, it's a placeholder
-                parts.unshift(parts.pop());
-            }
-            if (useReversedDepth)
-                prefix += "/";
+            if (crit.classes.length > 0)
+                preconditions.push('contains(concat(" ",@class," ")," ' + crit.classes.join(' ") and contains(concat(" ",@class," ")," ') + ' ")');
+            var part = crit.tag == undefined ? "*" : crit.tag;
+            if (preconditions.length > 0)
+                part += "["+preconditions.join(" and ")+"]";
+            parts[crit.depth] = part;
         }
-        parts[0] = prefix;
+        parts.shift(); // remove the placeholder for the following process
+        for (var i = 0 ; i < parts.length ; i++)
+            if (parts[i] == undefined)
+                parts[i] = "*";
+        if (parts.length > 0 && useReversedDepth)
+            parts.reverse();
+        if (useReversedDepth)
+            prefix += "/";
+        parts.unshift(prefix);
         // Get the nth ancestor of the target element
         for (var i = Math.abs(ancestryLevel) ; i > 0 ; i--) {
             if (parts[parts.length-1] == "*")
@@ -150,9 +134,7 @@ window.PageExtractor.Algo.XPath.Query = function() {
         var rtn = parts.join("/");
         // ORing with other parts and returning
         if (orQueries.length > 0) {
-            var ors = [];
-            if (rtn != "")
-                ors.push(rtn);
+            var ors = [rtn];
             for (var i = 0 ; i < orQueries.length ; i++) {
                 var sub = orQueries[i].toXPath();
                 if (sub.length != 0)
@@ -166,10 +148,20 @@ window.PageExtractor.Algo.XPath.Query = function() {
         var rtn = new window.PageExtractor.Algo.XPath.Query();
         rtn.setAncestryLevel(ancestryLevel);
         rtn.setUseReversedDepth(useReversedDepth);
-        for (var i = 0 ; i < criteria.length ; i++) {
-            var c = criteria[i];
-            rtn.addCriterion(c.depth, c.depth_reversed, c.tag, c.classes, c.position);
+        for (var key in criteriaByDepth) {
+            var c = criteriaByDepth[key];
+            rtn.addCriterion(c.depth, undefined, c.tag, c.classes, c.position);
         }
+        for (var key in criteriaByReversedDepth) {
+            var c = criteriaByReversedDepth[key];
+            rtn.addCriterion(undefined, c.depth, c.tag, c.classes, c.position);
+        }
+        return rtn;
+    };
+    this.deepRecursiveCopy = function() { // Won't work with recursive objects!
+        var rtn = this.copySelf();
+        for (var i = 0 ; i < orQueries.length ; i++)
+            rtn.addOr(orQueries[i].deepRecursiveCopy());
         return rtn;
     };
 }
