@@ -14,7 +14,7 @@ window.PageExtractor.Algo.Data.makeExample = function (target, isPositive) {
         element: target,
         positive: isPositive,
         element_hierarchy: [],
-        data: []
+        data: [] // ELEMENTS SHOULDN'T BE MODIFIED (they're shared to reduce memory footprint)
     };
     var curr = target;
     while (curr && curr != document.body) {
@@ -32,14 +32,10 @@ window.PageExtractor.Algo.Data.makeExample = function (target, isPositive) {
                 // XXX Deactivated: text_len: curr.textContent.replace(/[\s\n]+/,' ').trim().length
             };
         }
-        rtn.data.push(datas.data);
+        rtn.data.push(datas.data); // DON'T ALTER
         curr = curr.parentNode;
     }
     rtn.element_hierarchy.reverse();
     rtn.data.reverse();
-    for (var d = 0 ; d < rtn.data.length ; d++) {
-        rtn.data[d].depth = d;
-        rtn.data[d].depth_reversed = d - (rtn.data.length-1);
-    }
     return rtn;
 };

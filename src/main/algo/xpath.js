@@ -99,6 +99,7 @@ window.PageExtractor.Algo.XPath.Query = function() {
          *     prepend "/" (an additional / to get '//')
          */
         var set = useReversedDepth ? criteriaByReversedDepth : criteriaByDepth;
+        var depthOffset = useReversedDepth ? 1 : 0; // reversed depth min is 0, depth min is 1, normalize and prevent placeholder from being erased
         for (var key in set) {
             var crit = set[key];
             var preconditions = [];
@@ -106,14 +107,14 @@ window.PageExtractor.Algo.XPath.Query = function() {
                 if (crit.position >= 0)
                     preconditions.push("position()="+crit.position);
                 else
-                    preconditions.push("position()=last()-"+Math.abs(crit.position));
+                    preconditions.push("position()=last()-"+(Math.abs(crit.position)-1));
             }
             if (crit.classes.length > 0)
                 preconditions.push('contains(concat(" ",@class," ")," ' + crit.classes.join(' ") and contains(concat(" ",@class," ")," ') + ' ")');
             var part = crit.tag == undefined ? "*" : crit.tag;
             if (preconditions.length > 0)
                 part += "["+preconditions.join(" and ")+"]";
-            parts[crit.depth] = part;
+            parts[crit.depth + depthOffset] = part;
         }
         parts.shift(); // remove the placeholder for the following process
         if (parts.length > 0) {
@@ -124,7 +125,6 @@ window.PageExtractor.Algo.XPath.Query = function() {
                 parts.reverse();
             if (useReversedDepth)
                 prefix += "/";
-            parts.unshift(prefix);
             // Get the nth ancestor of the target element
             for (var i = Math.abs(ancestryLevel) ; i > 0 ; i--) {
                 if (parts[parts.length-1] == "*")
@@ -132,9 +132,10 @@ window.PageExtractor.Algo.XPath.Query = function() {
                 else
                     parts.push("..");
             }
-            if (ancestryLevel == 0)
-                parts.push(".");
+        } else {
+            parts.push(".");
         }
+        parts.unshift(prefix);
         var rtn = parts.join("/");
         // ORing with other parts and returning
         if (orQueries.length > 0) {
@@ -208,16 +209,19 @@ window.PageExtractor.Algo.XPath.getIndex = function (target, reverse) {
     var istep = reverse ? -1 : 1;
     for (; reverse ? i >= 0 : i < siblings.length ; i += istep) {
         if (siblings[i].tagName == target.tagName) {
-            if (found) return idx;
+            if (found)
+                return idx;
             idx += istep;
-        }
-        if (siblings[i] == target) {
-            if (idx != 0) break; // index necessary
-            found = true; // first element of that type, check if other exist (ie. is index necessary)
+            if (siblings[i] == target) {
+                // Test if index is already significant
+                if (Math.abs(idx) != 1)
+                    return idx;
+                // Otherwise check if other exist
+                found = true;
+            }
         }
     }
-    if (Math.abs(idx) <= 1 && !found) return 0; // index not necessary
-    return idx;
+    return 0; // index finally not necessary, or no match
 }
 
 window.PageExtractor.Algo.XPath.getSiblingsTagCount = function (target) {
