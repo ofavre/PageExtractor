@@ -54,6 +54,42 @@ window.PageExtractor.Ui.Manip.elementClicked = function (evt) {
     evt.preventDefault();
 }
 
+window.PageExtractor.Ui.Manip.elementMousehover_timeout = 200; // ms
+window.PageExtractor.Ui.Manip.elementMousehover_timer = undefined;
+window.PageExtractor.Ui.Manip.hoverElement = undefined;
+window.PageExtractor.Ui.Manip.elementMousehover = function(event) {
+    if (!event.shiftKey)
+        return;
+    var target = event.target;
+    if (this.root.Html.Attrs.attributeValuesHas(target, "class", ['PageExtractorExampleHighlight'], false))
+        target = this.getExampleFromHighlight(target);
+    if (target == this.hoverElement)
+        return;
+    if (this.elementMousehover_timer != undefined) {
+        clearTimeout(this.elementMousehover_timer);
+        this.elementMousehover_timer = undefined;
+    }
+    if (this.elementMousehoverCbDelegate == undefined)
+        this.elementMousehoverCbDelegate = this.root.Util.delegate(this,'elementMousehoverCb');
+    this.hoverElement = target;
+    this.elementMousehover_timer = setTimeout(this.elementMousehoverCbDelegate, this.elementMousehover_timeout);
+}
+window.PageExtractor.Ui.Manip.elementMousehover_highlights = [];
+window.PageExtractor.Ui.Manip.elementMousehoverCbDelegate = undefined;
+window.PageExtractor.Ui.Manip.elementMousehoverCb = function(event) {
+    this.elementMousehover_timer = undefined;
+    this.removeHighlight(this.elementMousehover_highlights);
+    this.elementMousehover_highlights = [];
+    var similar = this.root.Algo.getSimilarTo(this.hoverElement);
+    for (var i = 0 ; i < similar.length ; i++)
+        this.elementMousehover_highlights.push(this.highlightElement(similar[i], "hover"));
+}
+window.PageExtractor.Ui.Manip.elementMousehoverClear = function() {
+    this.removeHighlight(this.elementMousehover_highlights);
+    this.elementMousehover_highlights = [];
+    this.hoverElement = undefined;
+}
+
 window.PageExtractor.Ui.Manip.addNewExampleAndHighlightIt = function (target, isPositive) {
     if (!target) return;
     if (isPositive) {
@@ -151,23 +187,24 @@ window.PageExtractor.Ui.Manip.removeExample = function (target, fromTypes) {
 window.PageExtractor.Ui.Manip.removeHighlight = function (highlight) {
     if (!highlight) return;
     if (highlight instanceof Array) {
-        for (var i = 0 ; i < highlight.length ; i++)
-            this.removeHighlight(highlight[i]);
+        var array = highlight.slice();
+        for (var i = 0 ; i < array.length ; i++)
+            this.removeHighlight(array[i]);
         return;
     }
     var type = this.root.Html.Data.getDataFrom(highlight)["type"];
     delete this.root.Html.Data.getDataFrom(this.getExampleFromHighlight(highlight))["highlight"][type];
     var froms = { positive: this.exampleHighlights, negative: this.exampleHighlights, result: this.highlights };
     var from = froms[type];
-    var idx = from.indexOf(highlight);
-    if (idx >= 0) from.splice(idx, 1);
+    if (from != undefined) {
+        var idx = from.indexOf(highlight);
+        if (idx >= 0) from.splice(idx, 1);
+    }
     this.root.Html.Data.removeDataFrom(highlight);
     highlight.parentNode.removeChild(highlight);
 }
 window.PageExtractor.Ui.Manip.clearExamples = function () {
-    for (i = 0 ; i < this.exampleHighlights.length ; i++) {
-        this.exampleHighlights[i].parentNode.removeChild(this.exampleHighlights[i]);
-    }
+    this.removeHighlight(this.exampleHighlights);
     this.exampleHighlights = [];
     this.root.Algo.positives = [];
     this.root.Algo.negatives = [];
@@ -177,9 +214,8 @@ window.PageExtractor.Ui.Manip.clearExamples = function () {
 window.PageExtractor.Ui.Manip.highlights = []
 
 window.PageExtractor.Ui.Manip.clearResults = function () {
-    for (i = 0 ; i < this.highlights.length ; i++) {
-        this.highlights[i].parentNode.removeChild(this.highlights[i]);
-    }
+    this.elementMousehoverClear();
+    this.removeHighlight(this.highlights);
     this.root.Algo.results = [];
     this.highlights = [];
 }

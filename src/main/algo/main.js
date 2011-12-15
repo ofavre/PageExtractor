@@ -42,6 +42,8 @@ window.PageExtractor.Algo.learn = function () {
      *     - Update element count and means max similarity with positives and negatives, for that key
      *  - Sort by mean max similarity with positives
      *  - (Prefer: higher similarity with positives, lower similarity with negatives, fewer classes)
+     *  - Get better criterion
+     *  - Create a query from it
      *  - (What now?)
      */
     var criteriaSearchCtx = new this.CriteriaCandidateContext();
@@ -114,6 +116,70 @@ window.PageExtractor.Algo.learn = function () {
             "Total:\t"+(good+bad)+"\n"+
             "Good:\t"+good+" ("+(100.0*good/(good+bad+0.0))+" %)\n"+
             "Bad:\t"+bad+" ("+(100.0*bad/(good+bad+0.0))+" %)");
+}
+
+window.PageExtractor.Algo.getSimilarTo = function (element) {
+    element = this.Data.makeExample(element);
+    var collectingQuery = new this.XPath.Query();
+    collectingQuery.setUseReversedDepth(true);
+    collectingQuery.addCriterion(undefined, 0, element.data[element.data.length-1].tag, [], undefined);
+    var collectingResults = this.Stats.statElements(this.XPath.getResults(collectingQuery.toXPath()), [element], []);
+
+    if (collectingResults.length == 0)
+        return [];
+
+    /*
+     * Try using classes and hierarchy first.
+     *  - Search for anything (like '/html/body//TAG')
+     *  - Find good classes/depth:
+     *     - Iterate results
+     *     - Consider hierarchy from leaf to root
+     *     - Note unique classes/depth and n-uples/ and /depth_reversed: use as key
+     *     - Add if not already available
+     *     - Update element count and means max similarity with positives and negatives, for that key
+     *  - Sort by mean max similarity with positives
+     *  - (Prefer: higher similarity with positives, lower similarity with negatives, fewer classes)
+     *  - Get better criterion
+     *  - Create a query from it
+     */
+    var criteriaSearchCtx = new this.CriteriaCandidateContext();
+    for (var i = 0 ; i < collectingResults.length ; i++) {
+        var rslt = collectingResults.data[i];
+        for (var d = rslt.data.length-1, dr = 0 ; d >= 0 ; --d, --dr) {
+            var elmt = rslt.data[d];
+            var cls = this.root.Util.combinations(elmt.classes, 1);
+            for (var j = 0 ; j < cls.length ; j++) {
+                criteriaSearchCtx.getOrCreate(elmt.tag, cls[j], d+1, false).updateWithNewElement(collectingResults, i);
+                criteriaSearchCtx.getOrCreate(elmt.tag, cls[j], dr , true ).updateWithNewElement(collectingResults, i);
+            }
+        }
+    }
+    var sortedCriteriaIdx = criteriaSearchCtx.getSortedIndexes();
+    var best;
+    for (var i = 0 ; i < sortedCriteriaIdx.length ; i++) {
+        var d = criteriaSearchCtx.getByIndex(sortedCriteriaIdx[i]);
+        if (d.mean_max_similarity_with_positives > d.mean_max_similarity_with_negatives) {
+            best = i;
+            break;
+        }
+    }
+
+    if (best == undefined)
+        return [];
+    best = criteriaSearchCtx.getByIndex(sortedCriteriaIdx[best]);
+
+    var results = [];
+    var query = new this.XPath.Query();
+    var d  = best.depth_is_reversed ? undefined : best.depth;
+    var dr = best.depth_is_reversed ? best.depth : undefined;
+    query.addCriterion(d, dr, best.tag, best.classes, undefined);
+    query.setUseReversedDepth(best.depth_is_reversed);
+    var potentialResults = this.Stats.statElements(this.XPath.getResults(query.toXPath()), [element], []);
+    for (var i = 0 ; i < potentialResults.length ; i++)
+        if (potentialResults.stats.similarity.positives_as_ref.by_elmt.max[i] > potentialResults.stats.similarity.negatives_as_ref.by_elmt.max[i])
+            results.push(potentialResults.elements[i]);
+
+    return results;
 }
 
 window.PageExtractor.Algo.CriteriaCandidateContext = function () {

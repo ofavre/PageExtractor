@@ -9,7 +9,11 @@ if (!window.PageExtractor) window.PageExtractor = {};
 if (!window.PageExtractor.Algo) window.PageExtractor.Algo = { super: PageExtractor, root: window.PageExtractor };
 if (!window.PageExtractor.Algo.Stats) window.PageExtractor.Algo.Stats = { super: window.PageExtractor.Algo, root: window.PageExtractor };
 
-window.PageExtractor.Algo.Stats.statElements = function (elements) {
+window.PageExtractor.Algo.Stats.statElements = function (elements, positives, negatives) {
+    if (positives == undefined)
+        positives = this.super.positives;
+    if (negatives == undefined)
+        negatives = this.super.negatives;
     var rtn = {
         length: 0,
         elements: [],
@@ -37,12 +41,12 @@ window.PageExtractor.Algo.Stats.statElements = function (elements) {
     // Copy elements
     rtn.elements = elements.slice();
     // Init 2D arrays
-    for (var i = 0 ; i < this.super.positives.length ; i++) {
+    for (var i = 0 ; i < positives.length ; i++) {
         rtn.stats.similarity.positives_as_ref.val_by_ref_by_elmt.push([]);
         rtn.stats.similarity.positives_as_ref.by_ref.avg.push(0.0);
         rtn.stats.similarity.positives_as_ref.by_ref.max.push(0.0);
     }
-    for (var i = 0 ; i < this.super.negatives.length ; i++) {
+    for (var i = 0 ; i < negatives.length ; i++) {
         rtn.stats.similarity.negatives_as_ref.val_by_ref_by_elmt.push([]);
         rtn.stats.similarity.negatives_as_ref.by_ref.avg.push(0.0);
         rtn.stats.similarity.negatives_as_ref.by_ref.max.push(0.0);
@@ -63,9 +67,9 @@ window.PageExtractor.Algo.Stats.statElements = function (elements) {
         rtn.data.push(ex);
         avg = 0.0;
         rtn.stats.similarity.positives_as_ref.by_elmt.max.push(0.0);
-        for (var p = 0 ; p < this.super.positives.length ; p++) {
-            var sim = this.exampleSimilarity(rtn.data[i], this.super.positives[p]);
-            avg += sim / this.super.positives.length;
+        for (var p = 0 ; p < positives.length ; p++) {
+            var sim = this.exampleSimilarity(rtn.data[i], positives[p]);
+            avg += sim / positives.length;
             rtn.stats.similarity.positives_as_ref.val_by_ref_by_elmt[p].push(sim);
             rtn.stats.similarity.positives_as_ref.by_ref.avg[p] += sim / rtn.length;
             if (sim > rtn.stats.similarity.positives_as_ref.by_ref.max[p])
@@ -79,9 +83,9 @@ window.PageExtractor.Algo.Stats.statElements = function (elements) {
         rtn.stats.similarity.positives_as_ref.avg += avg / rtn.length;
         avg = 0.0;
         rtn.stats.similarity.negatives_as_ref.by_elmt.max.push(0.0);
-        for (var p = 0 ; p < this.super.negatives.length ; p++) {
-            var sim = this.exampleSimilarity(rtn.data[i], this.super.negatives[p]);
-            avg += sim / this.super.negatives.length;
+        for (var p = 0 ; p < negatives.length ; p++) {
+            var sim = this.exampleSimilarity(rtn.data[i], negatives[p]);
+            avg += sim / negatives.length;
             rtn.stats.similarity.negatives_as_ref.val_by_ref_by_elmt[p].push(sim);
             rtn.stats.similarity.negatives_as_ref.by_ref.avg[p] += sim / rtn.length;
             if (sim > rtn.stats.similarity.negatives_as_ref.by_ref.max[p])

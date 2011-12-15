@@ -37,6 +37,10 @@
     background-attachment: fixed;
     background-repeat: repeat;
 }
+.PageExtractorExampleHighlight.PageExtractorType-hover {
+    background-color: cyan;
+    opacity: 0.5;
+}
 
 .PageExtractorControlPanel, .PageExtractorControlPanel div, .PageExtractorControlPanel span, .PageExtractorControlPanel ol, .PageExtractorControlPanel li, .PageExtractorControlPanel button {
     /* Reset */

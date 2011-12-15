@@ -55,6 +55,8 @@ window.PageExtractor.Setup.setup = function () {
     this.installCss();
     this.UiManip_elementClicked_closureEventHandler = this.root.Util.delegate(this.root.Ui.Manip, 'elementClicked');
     document.addEventListener("click", this.UiManip_elementClicked_closureEventHandler, true);
+    this.UiManip_elementMousehover_closureEventHandler = this.root.Util.delegate(this.root.Ui.Manip, 'elementMousehover');
+    document.addEventListener("mousemove", this.UiManip_elementMousehover_closureEventHandler, true);
     this.installControlPanel();
 }
 
@@ -64,6 +66,8 @@ window.PageExtractor.Setup.tearDown = function () {
     this.removeCss();
     document.removeEventListener("click", this.UiManip_elementClicked_closureEventHandler, true);
     delete this.UiManip_elementClicked_closureEventHandler;
+    document.removeEventListener("mousemove", this.UiManip_elementMousehover_closureEventHandler, true);
+    delete this.UiManip_elementMousehover_closureEventHandler;
     this.removeControlPanel();
     this.root.Ui.Manip.clearExamples();
     this.root.Ui.Manip.clearResults();
